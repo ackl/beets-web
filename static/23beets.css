@@ -1,0 +1,352 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:400,900);  /* <-- Just for the demo, Yes I like pretty fonts... */
+::-webkit-scrollbar
+{
+  width: 8px;  /* for vertical scrollbars */
+  height: 8px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(0, 0, 0, 0.65);
+}
+
+a {
+    color: #fafafa;
+}
+.square a {
+    color: #F6713C;
+}
+a:hover {
+    color: #812828;
+    /*color: indianred;*/
+    text-decoration: none;
+}
+.square {
+    float:left;
+    position: relative;
+    width: 21%;
+    padding-bottom : 21%; /* = width for a 1:1 aspect ratio */
+    margin:1.66%;
+    overflow:hidden;
+    /*border: 3px solid #222;*/
+    z-index: 2;
+    min-height: 100%;
+}
+
+.content {
+    position:absolute;
+    height:21%; /* = 100% - 2*5% padding */
+    width:100%; /* = 100% - 2*5% padding */
+    bottom: 0;
+    opacity: 0.6;
+    background: #000;
+}
+.table{
+    display:table;
+    width:100%;
+    height:100%;
+    opacity: 0;
+}
+.table:hover {
+    opacity: 1;
+}
+.square:hover {
+}
+.square:hover .table{
+    opacity: 1;
+}
+.table-cell{
+    display:table-cell;
+    vertical-align:middle;
+}
+/*  For list */
+ul {
+    text-align:left;
+    margin:3% 0 0;
+    padding:0;
+    list-style-type:none;
+}
+li{
+    margin: 0 0 0 5%;
+    padding:0;
+}
+
+
+/*  For responsive images */
+
+.content .rs{
+    width:auto;
+    height:auto;
+    max-height:90%;
+    max-width:100%;
+}
+/*  For responsive images as background */
+
+.bg{
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:cover; /* you change this to "contain" if you don't want the images to be cropped */
+    color:#fff;
+    height: 100%;
+}
+
+/*.img1{
+    background-image: url('https://farm3.staticflickr.com/2827/10384422264_d9c7299146.jpg');
+}
+.img2{
+    background-image: url('https://farm7.staticflickr.com/6217/6216951796_e50778255c.jpg');
+}
+.img3{
+    background-image: url('https://farm4.staticflickr.com/3794/13893055574_3df0ab636b.jpg');
+}*/
+
+/*  following just for the demo */
+
+
+body {
+    font-size:20px;
+    font-family: 'Lato',verdana, sans-serif;
+    color: #777;
+    text-align:center;
+    background-color: #6c7187;
+background-image: url(http://www.transparenttextures.com/patterns/3px-tile.png);
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+}
+p{
+    margin:0;
+    padding:0;
+    text-align:left;
+}
+
+.numbers{
+    font-weight:900;
+    font-size:100px;
+}
+
+#bottom {
+    clear:both;
+    margin:0 1.66%;
+    width:89.68%;
+    padding: 3.5%;
+    background-color:#1E1E1E;
+    color: #fff;
+}
+#bottom p{
+    text-align:center;
+    line-height:2em;
+}
+#bottom a{
+    color: #000;
+    text-decoration:none;
+    border:1px solid #000;
+    padding:10px 20px 12px;
+    line-height:70px;
+    background:#ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#bottom a:hover{
+    background:#ECECEC;
+    border:1px solid #fff;
+}
+h1 a {
+    color: #efefef;
+}
+h1 {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    /*background: #833;*/
+    text-align: left;
+    padding-left: 32px;
+}
+h1 a:hover {
+    text-decoration: none;
+}
+h1, h2 {
+    margin: 0px;
+}
+h2 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #335;
+    color: #fafafa;
+}
+
+.progBar {
+background-color: #657BBD;
+height:10px;
+width: 0%;
+    pointer-events:none;
+}
+.play-pause-button {
+    background: #444;
+    text-align: center;
+    color: white;
+    height: 75px;
+    padding: 0px;
+    padding-top: 9px;
+    font-size: 2em;
+    font-weight: 900;
+    cursor: pointer;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+    position: fixed;
+    width: 6.333333%;
+    background-size: cover;
+}
+.play-pause-button:hover {
+    color: #3E2E2E;
+}
+#progress-bar {
+background-color: #333333;
+height: 10px;
+position: relative;
+    padding: 0px;
+}
+.playback-info {
+    background: #444;
+    height: 65px;
+}
+.seek-position:hover {
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+.seek-position:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+.seek-position:active .progBar {
+    background: #344;
+}
+#player-panel {
+    bottom: 0;
+    right: 0;
+    z-index: 9;
+    position: fixed;
+    width: 93.666667%;
+}
+.player-panel-push {
+    left: 228px;
+}
+ul{
+    columns: 3;
+  -webkit-columns: 3;
+  -moz-columns: 3;
+}
+.square ul {
+  width: 92%;
+margin: 0 auto;
+    text-align: center;
+        columns: 1;
+  -webkit-columns:1;
+  -moz-columns: 1;
+}
+.upnext-list {
+    text-align: center;
+        columns: 1;
+  -webkit-columns:1;
+  -moz-columns: 1;
+  margin: 0px;
+}
+.album-song-list {
+    height: 100%;
+    font-size: 0.65em;
+    opacity: 0.88;
+}
+h4 {
+    position: absolute;
+    margin-left: auto;
+margin-right: auto;
+left: 0;
+right: 0;
+}
+.square .ul-col-2 {
+    columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  font-size: 0.9em;
+
+}
+/*.table-cell .bigtext {
+font-size: 1.3em;
+}*/
+.bigtext {
+font-size: 1.3em;
+}
+.valign-bottom {
+  vertical-align: bottom;
+  padding-bottom: 7%;
+}
+@media (min-width: 1200px) {
+    .container {
+       width: 1256px;
+    }
+}
+#artist-list li {
+    margin: 14px
+}
+.container {
+       margin-bottom: 100px;
+}
+.letter-heads {
+    background: indianred;
+width: 81%;
+padding: 2%;
+margin-top: 0px;
+color: white;
+/*padding-top: 1px;
+padding-top: */
+}
+.top-bar {
+    /*background: #833;*/
+    text-align: left;
+    color: #efefef;
+}
+.home-link {
+    display: inline-block;
+}
+nav li {
+    list-style-type: none;
+    margin: 0;
+}
+.glyphicon-list {
+    font-size: xx-large;
+    right: 12px;
+top: 21px;
+position: absolute;
+}
+.glyphicon-step-forward {
+    font-size: xx-large;
+    right: 70px;
+    top: 21px;
+    position: absolute;
+}
+i {
+    cursor: pointer;
+}
+.now-playing-art {
+        height: 100px;
+    width: 90px;
+    background-size: contain;
+}
+.now-playing-info {
+    position: absolute;
+    left: 20px;
+}
+#now-playing-artist {
+    top: 40px;
+}
+.left-menu-btn {
+    top: -2px;
+    left: 14px;
+}

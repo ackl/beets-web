@@ -1,0 +1,53 @@
+{
+  "name": "23beets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "static/js/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "backbone": "1.1.2",
+    "bootstrap": "^3.2.0",
+    "jquery": "2.1.1",
+    "jquery-ui": "ackl/jquery-ui",
+    "underscore": "1.7.0",
+    "backbone.soundmanager2": "git://github.com/audiosocket/backbone.soundmanager2.git"
+  },
+  "devDependencies": {
+    "browserify": "<5",
+    "browserify-shim": "3.6.0",
+    "gulp": "^3.8.7",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "^0.3.2",
+    "jasmine-node": "1.14.5",
+    "karma-browserify": "0.2.1",
+    "karma-cli": "0.0.4",
+    "karma-jasmine": "0.1.5",
+    "karma-phantomjs-launcher": "~0.1",
+    "node-underscorify": "0.0.11",
+    "vinyl-source-stream": "^0.1.1",
+    "watchify": "0.8.1"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim",
+      "node-underscorify"
+    ]
+  },
+  "browser": {
+    "jquery-ui": "./node_modules/jquery-ui/dist/jquery-ui.js",
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "browserify-shim": {
+    "jquery-ui": {
+      "depends": "jquery"
+    },
+    "bootstrap": {
+      "exports": "bootstrap",
+      "depends": "jquery"
+    }
+  },
+  "author": "Andrew Low",
+  "license": "ISC"
+}

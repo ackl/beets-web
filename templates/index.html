@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>23beets</title>
+
+        <link rel="stylesheet"
+        href="{{ url_for('static', filename='beets.css') }}" type="text/css">
+        <link rel="stylesheet"
+        type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
+        <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='underscore.js') }}">
+        </script>
+        <script src="{{ url_for('static', filename='backbone.js') }}"></script>
+        <script src="{{ url_for('static', filename='beets.js') }}"></script>
+        <script type="{{ url_for('static', filename='soundmanager2.js') }}"></script>
+        <script type="{{ url_for('static', filename='backbone.soundmanager2.js') }}"></script>
+    </head>
+    <body>
+        <div id="header">
+            <h1>23beets</h1>
+            <div id="player">
+                <audio></audio>
+
+                <button class="disabled">&#9654;</button>
+                <button class="play">&#9654;</button>
+                <button class="pause" style="letter-spacing: 1px;">&#10073;&#10073;</button>
+
+                <span class="times">
+                    <span class="currentTime">
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div id="entities">
+            <form id="queryForm">
+                <input type="search" id="query" placeholder="Query" autocomplete="off">
+            </form>
+            <ul id="results">
+            </ul>
+        </div>
+
+        <div id="detail">
+        </div>
+
+        <!-- Templates. -->
+        <script type="text/template" id="item-entry-template">
+            <span class="artist-letter">  <%= artist[0].toUpperCase() %> </span>
+            <%= title %>
+            <span class="playing">&#9654;</span>
+        </script>
+        <script type="text/template" id="album-song-list-template">
+            <li><%= title %> </li>
+        </script>
+        <script type="text/template" id="item-detail-template">
+        <div id="album-art"></div>
+        <div class="item-detail-panel">
+            <div class="song-play-button">
+                <button class="play">&#9654;</button>
+            </div>
+            <div class="song-full-info">
+                <span class="artist"><%= artist %></span>
+                <span class="album">
+                    <span class="albumtitle"><%= album %></span>
+                    <span class="year">(<%= year %>)</span>
+                </span>
+                <span class="title"><%= title %></span>
+            </div>
+            <table class="table table-hover table-border" id="song-detail-list">
+                <tr>
+                    <td>Track</td>
+                    <td><%= tracktotal %></td>
+                </tr>
+                <tr>
+                    <td>Server ID</td>
+                    <td><%= id %></td>
+                </tr>
+                <tr>
+                    <td>Format</td>
+                    <td><%= format %></td>
+                </tr>
+                <tr>
+                    <td>Bitrate</td>
+                    <td><%= Math.round(bitrate/1000) %></td>
+                </tr>
+                <% if (mb_trackid) { %>
+                <tr>
+                    <td>Details</td>
+                    <td><a target="_blank" href="http://musicbrainz.org/recording/<%= mb_trackid %>">view</a></td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td>File</td>
+                    <td><a target="_blank" class="download" href="/item/<%= id %>/file">download</a>
+                    </td>
+                </tr>
+            </table>
+            <div class="album-list" id="album-list">
+            </div>
+        </div>
+        </script>
+        <script>
+            // soundManager.setup({
+            //   // where to find flash audio SWFs, as needed
+            //   url: '/static/',
+            //   onready: function() {
+            //     // SM2 is ready to play audio!
+            //     alert('hiya');
+            //   }
+            // });
+            $(document).ready(function(){
+                var mySound = soundManager.createSound({
+                    id: 'mySound',
+                    url: 'http://localhost:8337/item/223/file',
+                    autoLoad: true,
+                    autoPlay: true,
+                    volume: 100
+                });
+            });
+        </script>
+    </body>
+</html>
