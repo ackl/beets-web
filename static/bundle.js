@@ -31116,73 +31116,95 @@ var Artists = require('../collections/artists');
 var app = app || {};
 
 module.exports = Backbone.View.extend({
+
     tagName: 'li',
+
     events: {
         "click a": "selectSong"
     },
 
     /**
-    * Renders link for song model
+    * Renders link for song model.
     */
     render: function() {
         // this.$el.html('')
         this.$el.html('<a href="#">' + this.model.title + '</a>');
         return this;
     },
-    /**
-    * When song link is clicked/selected, stop page jumping to top
-    * Pass url of song file to playSong method
-    */
+
     selectSong: function(e) {
-        if (Artists.queueArray.length) {
+        var queue = Artists.queueArray;
+        var length = queue.length;
+        // If the song queue isn't empty, add it to the back of the queue.
+        if (length) {
             this.addSong(e);
-        }
-        else {
+        } else { // Otherwise add it to the queue and start playing the queue.
             this.addSong(e);
             this.playRecursive();
         }
-        $('.upnext-list').empty();
-        for (var i=1; i < Artists.queueArray.length; i++) {
-            $('.upnext-list').append('<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>');
+        // if (length > 1) {
+        //     $('.upnext-list').append(
+        //                 '<li id="song'+queue[length-1].id+'"><a>'+queue[length-1].title+'</a></li>'
+        //             );
+        // }
+                for (var i=1; i < Artists.queueArray.length; i++) {
+            $('.upnext-list').append(
+                    '<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>'
+                );
         }
     },
+
+    /**
+    * Passes url to sound file and other info to createSound method
+    */
     addSong: function(e){
         e.preventDefault();
         var url = this.getSongURL();
         var artURL = this.getArtURL(this.model.album_id);
         this.createSound(url, this.model.id, this.model.title, artURL, this.model.album, this.model.albumartist);
     },
+
     getArtURL: function(id) {
         return "/album/"+id+"/art";
     },
-    /**
-    * Returns url for song file
-    */
+
     getSongURL: function() {
         console.log('getting song url');
         var url = '/item/' + this.model.id + '/file';
         return url
     },
+
     /**
     * Create a soundManager Sound object
     */
     createSound: function(url, id, title, artURL, album, artist) {
-        console.log('creating the sound');
         id = id.toString();
-        this.mySound = soundManager.createSound({
+        this.soundObject = soundManager.createSound({
             id: id, // optional: provide your own unique id
             url: url,
             title: title
         });
-        Artists.queueArray.push({id: id.toString(),title: title, art: artURL, album: album, artist: artist});
-        console.log('this is the sound array');
-        console.log(Artists.queueArray);
+
+        Artists.queueArray.push({
+            id: id.toString(),
+            title: title,
+            art: artURL,
+            album: album,
+            artist: artist
+        });
     },
+
+    /**
+    * Start playing the array of sounds in queue
+    */
     playRecursive: function() {
         var that = this;
-        console.log(Artists.queueArray);
+
+        // Recursive queue function. Plays next sound in the sound array when current
+        // sound finishes.
         var chain = function (sound) {
-            soundManager.play(sound, {
+            soundManager.play(sound,
+                {
                     multiShotEvents: true,
                     whileplaying: function() {
                         $(".progBar").css('width', ((this.position / this.duration) * 100) + '%');
@@ -31191,7 +31213,9 @@ module.exports = Backbone.View.extend({
                         that.playbacktime(this.position);
                     },
                     onplay: function() {
-                        that.seekingShit();
+                        that.setSongInfoPanel();
+                        that.listenForSeeking();
+                        that.clickedPause();
                     },
                     onstop: function () {
                         that.nextSong();
@@ -31205,15 +31229,22 @@ module.exports = Backbone.View.extend({
                             chain(Artists.queueArray[0].id);
                         }
                     }
-                })}
-            chain(Artists.queueArray[0].id);
+                }
+            )
+        }
+        // Start the chain function with first sound in array.
+        chain(Artists.queueArray[0].id);
     },
+
+    /**
+    * Helper function for calculating the elapsed playback time and updating the shown playback time.
+    */
     playbacktime: function(ms) {
-        var timeString;
-        var s = Math.floor(ms / 1000);
-        var m = Math.floor(s / 60);
-        var d = m * 60;
-        var s_d = s - d;
+        var timeString,
+            s = Math.floor(ms / 1000),
+            m = Math.floor(s / 60),
+            d = m * 60,
+            s_d = s - d;
         (s < 10) ?
             timeString = '0:0' + s : (s < 60) ?
             timeString = '0:' + s : (s_d < 10) ?
@@ -31221,21 +31252,23 @@ module.exports = Backbone.View.extend({
 
         $('#progress-time').html(timeString);
     },
+
     nextSong: function() {
         Artists.queueArray.shift();
         console.log(Artists.queueArray);
-       // var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(sound);
-        // var index = Artists.queueArray.indexOf(sound);
         $('#nowplaying').empty();
         $('.upnext-list').empty();
-for (var i=1; i < Artists.queueArray.length; i++) {
-            $('.upnext-list').append('<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>');
+        for (var i=1; i < Artists.queueArray.length; i++) {
+            $('.upnext-list').append(
+                    '<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>'
+                );
         }
         this.playing = false;
         $('#progress-time').empty();
         $('.progBar').css('width', '0%');
         $('#progress-bar').toggleClass('seek-position');
     },
+
     clickedPause: function() {
         $('.play-pause-button').click(function(e) {
                 console.log($('.play-pause-icon').hasClass('glyphicon-pause'));
@@ -31248,55 +31281,50 @@ for (var i=1; i < Artists.queueArray.length; i++) {
                     $('.play-pause-icon').removeClass('glyphicon-play')
                                          .addClass('glyphicon-pause');
                 }
-                soundManager.togglePause(Artists.queueArray[0]);
+                soundManager.togglePause(Artists.queueArray[0].id);
                 console.log('clicked pause');
             });
     },
-    seekingShit: function() {
-        var that = this;
-        // window.nowPlaying = sound;
-    // var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(window.nowPlaying);
-    var title = Artists.queueArray[0].title;
-    var art = Artists.queueArray[0].art;
-    var album = Artists.queueArray[0].album;
-    var artist = Artists.queueArray[0].artist;
 
-    $('.play-pause-icon').removeClass('glyphicon-music').addClass('glyphicon-pause');
-    $('#nowplaying').text(title);
-    $('.play-pause-button').css('background-image', 'url("'+art+'")');
-    $('#now-playing-album').text(album);
-    $('#now-playing-artist').text(artist);
-    $('#progress-bar')
-        .click(function(e) {
-            var offset = $(this).offset(),
-                width = $(this).width();
-            var clickedPosition = e.clientX - offset.left;
-            var percentage = clickedPosition / width;
-            var targetDuration = percentage * that.duration;
-            soundManager.setPosition(Artists.queueArray[0].id, targetDuration);
-        })
-        .toggleClass('seek-position')
-        .mousedown(function(e) {
-            that.seeking = true;
-            var offset = $(this).offset(),
-                width = $(this).width();
-            var clickedPosition = e.clientX - offset.left;
-            $('.progBar').width(clickedPosition);
-            $(this).mousemove(function(e) {
+    setSongInfoPanel: function() {
+        var currentSong = Artists.queueArray[0];
+        $('.play-pause-icon').removeClass('glyphicon-music').addClass('glyphicon-pause');
+        $('#nowplaying').text(currentSong.title);
+        $('.play-pause-button').css('background-image', 'url("'+currentSong.art+'")');
+        $('#now-playing-album').text(currentSong.album);
+        $('#now-playing-artist').text(currentSong.artist);
+    },
+
+    listenForSeeking: function() {
+        var that = this;
+        $('#progress-bar')
+            .click(function(e) {
+                var offset = $(this).offset(),
+                    width = $(this).width();
+                var clickedPosition = e.clientX - offset.left;
+                var percentage = clickedPosition / width;
+                var targetDuration = percentage * that.duration;
+                soundManager.setPosition(Artists.queueArray[0].id, targetDuration);
+            })
+            .toggleClass('seek-position')
+            .mousedown(function(e) {
                 var offset = $(this).offset(),
                     width = $(this).width();
                 var clickedPosition = e.clientX - offset.left;
                 $('.progBar').width(clickedPosition);
+                $(this).mousemove(function(e) {
+                    var offset = $(this).offset(),
+                        width = $(this).width();
+                    var clickedPosition = e.clientX - offset.left;
+                    $('.progBar').width(clickedPosition);
+                });
+            })
+            .mouseup(function(e) {
+                $(this).off('mousemove');
+            })
+            .mouseleave(function(e) {
+                $(this).off('mousemove');
             });
-        })
-        .mouseup(function(e) {
-            that.seeking = false;
-            $(this).off('mousemove');
-        })
-        .mouseleave(function(e) {
-            that.seeking = false;
-            $(this).off('mousemove');
-        });
     }
 });
 
@@ -31382,6 +31410,7 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 var AlbumSongListView = require('./albumsonglistview');
+var Better = require('./betteralbumview');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
@@ -31424,6 +31453,10 @@ module.exports = Backbone.View.extend({
     	this.$('.content').slideUp();
     },
     clicked: function() {
+        var albumArt = this.getArtURL(this.model.id);
+        this.albumView = new Better({model: this.model});
+        // console.log(this.albumView.render().el);
+        $('#album-detail').html(this.albumView.render().el);
     	// console.log(this.model.items);
     	// var url = '/item/' + this.model.items[0].id + '/file';
     	// console.log(url);
@@ -31444,13 +31477,14 @@ module.exports = Backbone.View.extend({
     	if (this.model.items.length < 8) {
     		this.$('ul').addClass('bigtext');
     	}
+        $('html, body').animate({scrollTop : 0},300);
     	// this.model.items.forEach(function(item){
     	// 	this.$('.table-cell').append('<li style="list-style-type: none">'+item.title+'</li>');
     	// 	// console.log(item.title);
     	// }, this);
     }
 });
-},{"./albumsonglistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js":[function(require,module,exports){
+},{"./albumsonglistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js","./betteralbumview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/betteralbumview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31485,6 +31519,7 @@ module.exports = Backbone.View.extend({
     },
     showArtistList: function() {
         this.collection.fetch({reset:true});
+        $('.shrink-btn').click();
     },
     render: function() {
         $('.artist-heading').slideUp('fast');
@@ -31532,7 +31567,40 @@ module.exports = Backbone.View.extend({
 
 	}
 });
-},{"../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","../jquery":"/home/andrew/dev/beets/beetsplug/web/static/js/jquery.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","./soundqueueview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js":[function(require,module,exports){
+},{"../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","../jquery":"/home/andrew/dev/beets/beetsplug/web/static/js/jquery.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","./soundqueueview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/betteralbumview.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var template = require('../../templates/albumsonglisttemplate.html');
+var AlbumSongListView = require('./albumsonglistview');
+Backbone.$ = $;
+
+var AlbumSongItemView = require('./albumsongitemview');
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		console.log(this.model.art);
+	},
+	events: {
+		"click #shrink-album-detail": "shrink"
+	},
+	shrink: function() {
+		this.$('.album-detail-content').empty();
+		this.$el.animate({width:'toggle'},550);
+		this.$('.album-detail-content').animate({width:'toggle'},550);
+	},
+	render: function() {
+		var theSongs = new AlbumSongListView({collection: this.model.items});
+		this.$el.html(template({
+			name: this.model.album,
+			artist: this.model.albumartist,
+			url: '/album/'+this.model.id+'/art'
+		}));
+		this.$('.album-detail-content').append(theSongs.render().el).append(' <button class="btn shrink-btn" id="shrink-album-detail">shrink</button>');
+		return this;
+	}
+});
+},{"../../templates/albumsonglisttemplate.html":"/home/andrew/dev/beets/beetsplug/web/static/templates/albumsonglisttemplate.html","./albumsongitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsongitemview.js","./albumsonglistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31584,7 +31652,22 @@ module.exports = Backbone.View.extend({
 		});
 	}
 });
-},{"../../templates/soundqueuetemplate.html":"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html":[function(require,module,exports){
+},{"../../templates/soundqueuetemplate.html":"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/templates/albumsonglisttemplate.html":[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='\n<div class="album-detail-bg" style="background: url(\''+
+((__t=( url ))==null?'':__t)+
+'\') no-repeat;     background-size: cover;\n    background-position-y: 20%;"></div>\n<div class="album-detail-content">\n<span>'+
+((__t=( artist ))==null?'':__t)+
+'</span>\n<h1>'+
+((__t=( name ))==null?'':__t)+
+'</h1>\n  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aliquam erat in ante malesuada, facilisis semper nulla semper. Phasellus sapien neque, faucibus in malesuada quis, lacinia et libero. Sed sed turpis tellus. Etiam ac aliquam tortor, eleifend rhoncus metus. Ut turpis massa, sollicitudin sit amet molestie a, posuere sit amet nisl. Mauris tincidunt cursus posuere. Nam commodo libero quis lacus sodales, nec feugiat ante posuere. Donec pulvinar auctor commodo. Donec egestas diam ut mi adipiscing, quis lacinia mauris condimentum. Quisque quis odio venenatis, venenatis nisi a, vehicula ipsum. Etiam at nisl eu felis vulputate porta.</p>\n  <p>Fusce ut placerat eros. Aliquam consequat in augue sed convallis. Donec orci urna, tincidunt vel dui at, elementum semper dolor. Donec tincidunt risus sed magna dictum, quis luctus metus volutpat. Donec accumsan et nunc vulputate accumsan. Vestibulum tempor, erat in mattis fringilla, elit urna ornare nunc, vel pretium elit sem quis orci. Vivamus condimentum dictum tempor. Nam at est ante. Sed lobortis et lorem in sagittis. In suscipit in est et vehicula.</p> -->\n\n</div>';
+}
+return __p;
+};
+
+},{}],"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html":[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){

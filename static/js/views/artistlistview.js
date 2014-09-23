@@ -19,6 +19,7 @@ module.exports = Backbone.View.extend({
     },
     showArtistList: function() {
         this.collection.fetch({reset:true});
+        $('.shrink-btn').click();
     },
     render: function() {
         $('.artist-heading').slideUp('fast');

@@ -3,6 +3,7 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 var AlbumSongListView = require('./albumsonglistview');
+var Better = require('./betteralbumview');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
@@ -45,6 +46,10 @@ module.exports = Backbone.View.extend({
     	this.$('.content').slideUp();
     },
     clicked: function() {
+        var albumArt = this.getArtURL(this.model.id);
+        this.albumView = new Better({model: this.model});
+        // console.log(this.albumView.render().el);
+        $('#album-detail').html(this.albumView.render().el);
     	// console.log(this.model.items);
     	// var url = '/item/' + this.model.items[0].id + '/file';
     	// console.log(url);
@@ -65,6 +70,7 @@ module.exports = Backbone.View.extend({
     	if (this.model.items.length < 8) {
     		this.$('ul').addClass('bigtext');
     	}
+        $('html, body').animate({scrollTop : 0},300);
     	// this.model.items.forEach(function(item){
     	// 	this.$('.table-cell').append('<li style="list-style-type: none">'+item.title+'</li>');
     	// 	// console.log(item.title);
