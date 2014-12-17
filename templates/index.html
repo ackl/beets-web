@@ -16,14 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jPushMenu.css') }}">
 
-    <script type="text/javascript" src="{{ url_for('static', filename='js/soundmanager2.js') }}"></script>
-    <script type="text/javascript">
-        soundmanager.setup({
-            url: '{{ url_for('static', filename='swf/') }}',
-            html5PollingInterval: 10000,
-            debugMode: false,
-        });
-    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/soundmanager2-nodebug.js') }}"></script>
 </head>
 
 <body>

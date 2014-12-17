@@ -17,30 +17,23 @@ module.exports = Backbone.View.extend({
     * Renders link for song model.
     */
     render: function() {
-        // this.$el.html('')
         this.$el.html('<a href="#">' + this.model.title + '</a>');
         return this;
     },
 
     selectSong: function(e) {
+        e.stopPropagation();
         var queue = Artists.queueArray;
+        //console.log(queue);
         var length = queue.length;
-        // If the song queue isn't empty, add it to the back of the queue.
-        if (length) {
-            this.addSong(e);
-        } else { // Otherwise add it to the queue and start playing the queue.
-            this.addSong(e);
+
+        this.addSong(e);
+        if (!length) {
             this.playRecursive();
         }
-        // if (length > 1) {
-        //     $('.upnext-list').append(
-        //                 '<li id="song'+queue[length-1].id+'"><a>'+queue[length-1].title+'</a></li>'
-        //             );
-        // }
-                for (var i=1; i < Artists.queueArray.length; i++) {
-            $('.upnext-list').append(
-                    '<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>'
-                );
+
+        if (queue.length > 1) {
+            $('.upnext-list').append('<li id="song'+_.last(queue).id+'"><a>'+_.last(queue).title+'</a></li>');
         }
     },
 
@@ -59,7 +52,6 @@ module.exports = Backbone.View.extend({
     },
 
     getSongURL: function() {
-        console.log('getting song url');
         var url = '/item/' + this.model.id + '/file';
         return url
     },
@@ -70,7 +62,7 @@ module.exports = Backbone.View.extend({
     createSound: function(url, id, title, artURL, album, artist) {
         id = id.toString();
         this.soundObject = soundManager.createSound({
-            id: id, // optional: provide your own unique id
+            id: id,
             url: url,
             title: title
         });
@@ -90,8 +82,7 @@ module.exports = Backbone.View.extend({
     playRecursive: function() {
         var that = this;
 
-        // Recursive queue function. Plays next sound in the sound array when current
-        // sound finishes.
+        // Recursive queue function.
         var chain = function (sound) {
             soundManager.play(sound,
                 {
@@ -99,29 +90,31 @@ module.exports = Backbone.View.extend({
                     whileplaying: function() {
                         $(".progBar").css('width', ((this.position / this.duration) * 100) + '%');
                         that.duration = this.durationEstimate;
-                        // this.playbacktime(this.position);
                         that.playbacktime(this.position);
                     },
+
                     onplay: function() {
                         that.setSongInfoPanel();
                         that.listenForSeeking();
                         that.clickedPause();
                     },
+
                     onstop: function () {
                         that.nextSong();
                        if (Artists.queueArray[0] !== undefined) {
                             chain(Artists.queueArray[0].id);
                         }
                     },
+
                     onfinish: function () {
                        that.nextSong();
                        if (Artists.queueArray[0] !== undefined) {
                             chain(Artists.queueArray[0].id);
                         }
                     }
-                }
-            )
-        }
+                })
+            };
+
         // Start the chain function with first sound in array.
         chain(Artists.queueArray[0].id);
     },
@@ -130,30 +123,31 @@ module.exports = Backbone.View.extend({
     * Helper function for calculating the elapsed playback time and updating the shown playback time.
     */
     playbacktime: function(ms) {
-        var timeString,
-            s = Math.floor(ms / 1000),
+        var s = Math.floor(ms / 1000),
             m = Math.floor(s / 60),
             d = m * 60,
-            s_d = s - d;
-        (s < 10) ?
-            timeString = '0:0' + s : (s < 60) ?
-            timeString = '0:' + s : (s_d < 10) ?
-            timeString = m + ':0' + s_d : timeString = m + ':' + s_d
+            timeString = (s < 10) ?
+                '0:0' + s        : (s < 60) ?
+                '0:' + s         : (s-d < 10) ?
+                m + ':0' + s-d   : m + ':' + s-d;
 
         $('#progress-time').html(timeString);
     },
 
     nextSong: function() {
         Artists.queueArray.shift();
-        console.log(Artists.queueArray);
+
         $('#nowplaying').empty();
         $('.upnext-list').empty();
+
         for (var i=1; i < Artists.queueArray.length; i++) {
             $('.upnext-list').append(
                     '<li id="song'+Artists.queueArray[i].id+'"><a>'+Artists.queueArray[i].title+'</a></li>'
                 );
         }
+
         this.playing = false;
+
         $('#progress-time').empty();
         $('.progBar').css('width', '0%');
         $('#progress-bar').toggleClass('seek-position');
@@ -161,26 +155,25 @@ module.exports = Backbone.View.extend({
 
     clickedPause: function() {
         $('.play-pause-button').click(function(e) {
-                console.log($('.play-pause-icon').hasClass('glyphicon-pause'));
-                // $(this).html($(this).text() == '||' ? '►' : '||');
-                if ($('.play-pause-icon').hasClass('glyphicon-pause')) {
-                    $('.play-pause-icon').removeClass('glyphicon-pause')
-                                         .addClass('glyphicon-play');
-                }
-                else {
-                    $('.play-pause-icon').removeClass('glyphicon-play')
-                                         .addClass('glyphicon-pause');
-                }
-                soundManager.togglePause(Artists.queueArray[0].id);
-                console.log('clicked pause');
-            });
+            if ($('.play-pause-icon').hasClass('glyphicon-pause')) {
+                $('.play-pause-icon').removeClass('glyphicon-pause')
+                     .addClass('glyphicon-play');
+            } else {
+                $('.play-pause-icon').removeClass('glyphicon-play')
+                     .addClass('glyphicon-pause');
+            }
+
+            soundManager.togglePause(Artists.queueArray[0].id);
+        });
     },
 
     setSongInfoPanel: function() {
         var currentSong = Artists.queueArray[0];
+
         $('.play-pause-icon').removeClass('glyphicon-music').addClass('glyphicon-pause');
-        $('#nowplaying').text(currentSong.title);
         $('.play-pause-button').css('background-image', 'url("'+currentSong.art+'")');
+
+        $('#nowplaying').text(currentSong.title);
         $('#now-playing-album').text(currentSong.album);
         $('#now-playing-artist').text(currentSong.artist);
     },

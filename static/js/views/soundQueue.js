@@ -8,6 +8,7 @@ Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
+        console.log('a new one of me is here');
 	},
 
 	render: function() {

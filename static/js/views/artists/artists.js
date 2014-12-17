@@ -5,7 +5,6 @@ Backbone.$ = $;
 
 var Artists = require('../../collections/artists');
 var ArtistItemView = require('./artist');
-var SoundQueueView = require('./../soundQueue');
 
 module.exports = Backbone.View.extend({
     tagName: 'ul',
@@ -15,9 +14,6 @@ module.exports = Backbone.View.extend({
     initialize: function() {
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(Backbone.eventBus, 'showArtistList', this.showArtistList);
-        var soundQueue = new SoundQueueView;
-        soundQueue.render();
-        $('body').append(soundQueue.render().el);
     },
 
     showArtistList: function() {

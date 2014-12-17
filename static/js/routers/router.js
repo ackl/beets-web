@@ -6,6 +6,7 @@ Backbone.$ = $;
 var ArtistListView = require('../views/artists/artists.js');
 var Artists = require('../collections/artists');
 var ArtistAlbumsView = require('../views/albums/albums');
+var SoundQueueView = require('../views/soundQueue');
 
 module.exports = Backbone.Router.extend({
     initialize: function() {
@@ -29,5 +30,11 @@ module.exports = Backbone.Router.extend({
     showArtistList: function() {
         this.view = new ArtistListView({collection: Artists});
         Backbone.eventBus.trigger('showArtistList');
+        if (!this._soundQueue) {
+            var soundQueue = new SoundQueueView;
+            soundQueue.render();
+            $('body').append(soundQueue.render().el);
+            this._soundQueue = true;
+        }
     }
 });
