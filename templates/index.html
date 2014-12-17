@@ -1,123 +1,107 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>23beets</title>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <link rel="stylesheet"
-        href="{{ url_for('static', filename='beets.css') }}" type="text/css">
-        <link rel="stylesheet"
-        type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
-        <script src="{{ url_for('static', filename='jquery.js') }}"></script>
-        <script src="{{ url_for('static', filename='bootstrap.js') }}"></script>
-        <script src="{{ url_for('static', filename='underscore.js') }}">
-        </script>
-        <script src="{{ url_for('static', filename='backbone.js') }}"></script>
-        <script src="{{ url_for('static', filename='beets.js') }}"></script>
-        <script type="{{ url_for('static', filename='soundmanager2.js') }}"></script>
-        <script type="{{ url_for('static', filename='backbone.soundmanager2.js') }}"></script>
-    </head>
-    <body>
-        <div id="header">
-            <h1>23beets</h1>
-            <div id="player">
-                <audio></audio>
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-                <button class="disabled">&#9654;</button>
-                <button class="play">&#9654;</button>
-                <button class="pause" style="letter-spacing: 1px;">&#10073;&#10073;</button>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jPushMenu.css') }}">
 
-                <span class="times">
-                    <span class="currentTime">
-                    </span>
-                </span>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/soundmanager2.js') }}"></script>
+    <script type="text/javascript">
+        soundmanager.setup({
+            url: '{{ url_for('static', filename='swf/') }}',
+            html5PollingInterval: 10000,
+            debugMode: false,
+        });
+    </script>
+</head>
+
+<body>
+
+    <nav class="top-bar">
+        <i class="toggle-menu menu-left push-body glyphicon glyphicon-align-justify left-menu-btn"></i>
+        <h1 class="home-link"><a href="#">23beets</a></h1>
+
+    </nav>
+
+    <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left">
+        <h3>Menu</h3>
+        <a href="#">Your</a>
+        <a href="#">Mum</a>
+        <a href="#">Mate</a>
+        <a href="#" class="trip-mode">
+            <div style="background: url('http://lsd.bicycle-day.com/mark.png'); height: 200px; width: 200px;">
             </div>
+        </a>
+    </nav>
+
+    <div id="album-detail"> </div>
+
+    <div id="23beets" class="23beets container">
+        <!-- Left menu element-->
+        <ul id="artist-list"></ul>
+    </div>
+
+    <div class="play-pause-button col-xs-1">
+        <i class="glyphicon glyphicon-music play-pause-icon" style="height: 100%; width: 100%;"></i>
+    </div>
+
+    <div id="player-panel"class="col-xs-11" style="padding: 0px;">
+        <div id="progress-bar">
+            <div class="progBar"></div>
         </div>
 
-        <div id="entities">
-            <form id="queryForm">
-                <input type="search" id="query" placeholder="Query" autocomplete="off">
-            </form>
-            <ul id="results">
-            </ul>
+        <div class="playback-info">
+            <span class="now-playing-info" id="now-playing-album">album placeholder</span>
+            <span class="now-playing-info" id="now-playing-artist">artist placeholder</span>
+            <div id="nowplaying"></div><span id="progress-time"></span>
+            <i class="glyphicon glyphicon-step-forward "></i>
+            <i class="toggle-menu menu-right glyphicon glyphicon-list pull-right"></i>
         </div>
+    </div>
 
-        <div id="detail">
-        </div>
+    <script src="{{ url_for('static', filename='bundle.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 
-        <!-- Templates. -->
-        <script type="text/template" id="item-entry-template">
-            <span class="artist-letter">  <%= artist[0].toUpperCase() %> </span>
-            <%= title %>
-            <span class="playing">&#9654;</span>
-        </script>
-        <script type="text/template" id="album-song-list-template">
-            <li><%= title %> </li>
-        </script>
-        <script type="text/template" id="item-detail-template">
-        <div id="album-art"></div>
-        <div class="item-detail-panel">
-            <div class="song-play-button">
-                <button class="play">&#9654;</button>
-            </div>
-            <div class="song-full-info">
-                <span class="artist"><%= artist %></span>
-                <span class="album">
-                    <span class="albumtitle"><%= album %></span>
-                    <span class="year">(<%= year %>)</span>
-                </span>
-                <span class="title"><%= title %></span>
-            </div>
-            <table class="table table-hover table-border" id="song-detail-list">
-                <tr>
-                    <td>Track</td>
-                    <td><%= tracktotal %></td>
-                </tr>
-                <tr>
-                    <td>Server ID</td>
-                    <td><%= id %></td>
-                </tr>
-                <tr>
-                    <td>Format</td>
-                    <td><%= format %></td>
-                </tr>
-                <tr>
-                    <td>Bitrate</td>
-                    <td><%= Math.round(bitrate/1000) %></td>
-                </tr>
-                <% if (mb_trackid) { %>
-                <tr>
-                    <td>Details</td>
-                    <td><a target="_blank" href="http://musicbrainz.org/recording/<%= mb_trackid %>">view</a></td>
-                </tr>
-                <% } %>
-                <tr>
-                    <td>File</td>
-                    <td><a target="_blank" class="download" href="/item/<%= id %>/file">download</a>
-                    </td>
-                </tr>
-            </table>
-            <div class="album-list" id="album-list">
-            </div>
-        </div>
-        </script>
-        <script>
-            // soundManager.setup({
-            //   // where to find flash audio SWFs, as needed
-            //   url: '/static/',
-            //   onready: function() {
-            //     // SM2 is ready to play audio!
-            //     alert('hiya');
-            //   }
-            // });
-            $(document).ready(function(){
-                var mySound = soundManager.createSound({
-                    id: 'mySound',
-                    url: 'http://localhost:8337/item/223/file',
-                    autoLoad: true,
-                    autoPlay: true,
-                    volume: 100
-                });
-            });
-        </script>
-    </body>
+    <!--load jPushMenu, required-->
+    <script src="{{ url_for('static', filename='jPushMenu.js') }}"></script>
+    <!--call jPushMenu, required-->
+    <script>
+        $(document).ready(function() {
+            $('.toggle-menu').jPushMenu();
+        });
+        var globalTripID;
+        var tripFlag = false;
+        var tripMode = function(h) {
+            (function loop() {
+                 h = (h+10)%25360;
+                 document.documentElement.style.webkitFilter='hue-rotate('+h+'deg)'
+                 globalTripID = requestAnimationFrame(loop);
+            })();
+        }
+
+        $('.trip-mode').click(function() {
+            if (!tripFlag) {
+                tripMode(0);
+                tripFlag = true;
+            } else {
+                cancelAnimationFrame(globalTripID);
+                document.documentElement.style.webkitFilter='hue-rotate(0deg)'
+                tripFlag = false;
+            }
+        });
+    </script>
+
+</body>
 </html>

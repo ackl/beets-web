@@ -31241,6 +31241,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 appRouter = require('./routers/router');
+
 var ArtistListView = require('./views/artists/artists');
 var Artists = require('./collections/artists');
 
@@ -31250,7 +31251,7 @@ $(document).ready(function() {
     Backbone.eventBus = _.extend({}, Backbone.Events);
     new appRouter();
     Backbone.history.start();
-        app.view = new ArtistListView({collection: Artists});
+    app.view = new ArtistListView({collection: Artists});
 });
 
 },{"./collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./routers/router":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/routers/router.js","./views/artists/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js":[function(require,module,exports){
@@ -31294,16 +31295,16 @@ Backbone.$ = $;
 var ArtistListView = require('../views/artists/artists.js');
 var Artists = require('../collections/artists');
 var ArtistAlbumsView = require('../views/albums/albums');
-// var ArtistAlbumsView = require('../views/artistalbumsview');
-// var app = app || {};
 
 module.exports = Backbone.Router.extend({
     initialize: function() {
     },
+
     routes: {
         "": "showArtistList",
         "artists/*query": "getArtistAlbums",
     },
+
     getArtistAlbums: function(query) {
         var that = this;
         $.getJSON('/album/query/' + query, function(data) {
@@ -31313,12 +31314,10 @@ module.exports = Backbone.Router.extend({
             $('.content').hide()
         });
     },
+
     showArtistList: function() {
-        console.log('hi');
-        // console.log(this.view.render().el);
         this.view = new ArtistListView({collection: Artists});
         Backbone.eventBus.trigger('showArtistList');
-        // $('#artist-list').html(this.view.render.el());
     }
 });
 
@@ -31332,17 +31331,16 @@ var Better = require('./albumExpanded');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		$('#progress-bar').click(function() {
-			console.log('clicked outer div');
-		});
-		$('.progBar').click(function() {console.log('clicked inner div')});
 	},
+
 	events: {
 		'mouseover': 'hover',
 		'mouseleave': 'mouseout',
 		'click': 'clicked'
 	},
+
 	className: 'square bg',
+
 	render: function() {
 		var that = this;
 		var albumArt = this.getArtURL(this.model.id);
@@ -31359,15 +31357,19 @@ module.exports = Backbone.View.extend({
 		});
 		return this;
 	},
+
 	getArtURL: function(id) {
         return "/album/"+id+"/art";
     },
+
     hover: function() {
     	this.$('.content').slideDown('fast');
     },
+
     mouseout: function() {
     	this.$('.content').slideUp();
     },
+
     clicked: function() {
         var albumArt = this.getArtURL(this.model.id);
         this.albumView = new Better({model: this.model});
@@ -31382,32 +31384,35 @@ module.exports = Backbone.View.extend({
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
-var template = require('../../../templates/albumsonglisttemplate.html');
-var AlbumSongListView = require('./songs/songs');
 Backbone.$ = $;
 
-
-var AlbumSongItemView = require('./songs/songs');
+var template = require('../../../templates/albumsonglisttemplate.html');
+var AlbumSongListView = require('./tracks/tracks');
+var AlbumSongItemView = require('./tracks/tracks');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		console.log(this.model.art);
 	},
+
 	events: {
 		"click #shrink-album-detail": "shrink"
 	},
+
 	shrink: function() {
 		this.$('.album-detail-content').empty();
 		this.$el.animate({width:'toggle'},550);
 		this.$('.album-detail-content').animate({width:'toggle'},550);
 	},
+
 	render: function() {
 		var theSongs = new AlbumSongListView({collection: this.model.items});
+
 		this.$el.html(template({
 			name: this.model.album,
 			artist: this.model.albumartist,
 			url: '/album/'+this.model.id+'/art'
 		}));
+
 		this.$('.album-detail-content').append(theSongs.render().el).append(' <button class="btn shrink-btn" id="shrink-album-detail">shrink</button>');
 		return this;
 	}
@@ -31415,7 +31420,7 @@ module.exports = Backbone.View.extend({
 
 
 
-},{"../../../templates/albumsonglisttemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html","./songs/songs":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/songs.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albums.js":[function(require,module,exports){
+},{"../../../templates/albumsonglisttemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html","./tracks/tracks":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/tracks/tracks.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albums.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31424,48 +31429,40 @@ Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		// this.render();
 	},
+
 	events: {
 		"click .home": "goHome"
 	},
+
 	render: function() {
-		console.log(this.model);
-		console.log('that as model');
-		// $('#nowplaying').html(this.model[0].albumartist);
-		// $('h1').after('<h2 class="artist-heading">'+this.model[0].albumartist+'</h2>');
 		$('h1').addClass('home');
 		this.model.forEach(function(album){
-		var albumArt = this.getArtURL(album.id);
-		var albumArtView = new ArtistAlbumView({model: album});
-		this.$el.append(albumArtView.render().el);
-		// this.$el.append('<div class="square bg" style="background-image: url(\''+albumArt+'\')"><div class="content"><div class="table"><div class="table-cell"><div>'+album.album+'<div></div></div></div></div>');
+            this.$el.append(new ArtistAlbumView({model: album}).render().el);
 		}, this);
 
-		return this
+		return this;
 	},
+
 	getArtURL: function(id) {
         return "/album/"+id+"/art";
     },
+
     goHome: function() {
     	console.log('at go home');
-    	this.destroy_view();
+    	this.destroyView();
     	Backbone.history.navigate('', true);
     },
-    destroy_view: function() {
 
-	    // COMPLETELY UNBIND THE VIEW
+    destroyView: function() {
 	    this.undelegateEvents();
-
 	    this.$el.removeData().unbind();
-	    // Remove view from DOM
 	    this.remove();
 	    Backbone.View.prototype.remove.call(this);
-
 	}
 });
 
-},{"./album":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/album.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/song.js":[function(require,module,exports){
+},{"./album":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/album.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/tracks/track.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31686,36 +31683,6 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{"../../../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/songs.js":[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var _ = require('underscore');
-Backbone.$ = $;
-
-var AlbumSongItemView = require('./song');
-
-module.exports = Backbone.View.extend({
-	tagName: 'ul',
-	// className: this.collection.album,
-	render: function() {
-		console.log(this.collection);
-		// this.$el.html('')
-		if (this.collection.length > 14) {
-			console.log(this.collection.length);
-			this.className = 'ul-col-2';
-		}
-		this.collection.forEach(function(item) {
-			var songItemView = new AlbumSongItemView({model: item});
-			// songItemView.render();
-			this.$el.append(songItemView.render().el);
-		}, this);
-
-		return this;
-	}
-});
-
-},{"./song":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/song.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/tracks/track.js":[function(require,module,exports){
-module.exports=require("/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/song.js")
 },{"../../../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/tracks/tracks.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -31752,6 +31719,7 @@ Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
 	tagName: 'li',
+
 	render: function() {
 		this.$el.html('<a href="#artists/'+this.model+'">'+this.model+'</a>');
 		return this;
@@ -31761,16 +31729,18 @@ module.exports = Backbone.View.extend({
 },{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artists.js":[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
+var $ = require('../../jquery');
+Backbone.$ = $;
+
 var Artists = require('../../collections/artists');
 var ArtistItemView = require('./artist');
 var SoundQueueView = require('./../soundQueue');
-var $ = require('../../jquery');
-Backbone.$ = $;
-// var Artists = new Artists();
 
 module.exports = Backbone.View.extend({
     tagName: 'ul',
+
     id: 'artist-list',
+
     initialize: function() {
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(Backbone.eventBus, 'showArtistList', this.showArtistList);
@@ -31778,54 +31748,49 @@ module.exports = Backbone.View.extend({
         soundQueue.render();
         $('body').append(soundQueue.render().el);
     },
+
     showArtistList: function() {
         this.collection.fetch({reset:true});
         $('.shrink-btn').click();
     },
+
     render: function() {
         $('.artist-heading').slideUp('fast');
     	var artistNames = this.collection.models[0].attributes.artist_names;
-        this.$el.empty();
-        var getRandomColor = this.getRandomColor;
-    	var that = this.$el;
-        artistNames.sort();
         var firstLetters = [];
+
+        this.$el.empty();
+        artistNames.sort();
+
         artistNames.forEach(function(name) {
             firstLetters.push(name[0])
         });
+
         firstLetters = _.uniq(firstLetters, false);
-        that.append('<h3 class="letter-heads">'+firstLetters[0]+'</h3>');
+
+        this.$el.append('<h3 class="letter-heads">'+firstLetters[0]+'</h3>');
+
+    	var that = this;
         var counter = 1;
     	artistNames.forEach(function(artist) {
+            // Place letter headings
             if (artist[0] == firstLetters[counter]) {
-                that.append('<h3 class="letter-heads">'+firstLetters[counter]+'</h3>');
-                counter++
+                that.$el.append('<h3 class="letter-heads">'+firstLetters[counter]+'</h3>');
+                counter++;
             }
-    		  that.append(new ArtistItemView({model: artist}).render().el);
+
+            that.$el.append(new ArtistItemView({model: artist}).render().el);
     	});
-        // console.log(this.$el);
+
         $('.23beets').html(this.$el);
-        // console.log(that);
         return this;
     },
-    getRandomColor: function () {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    },
-    destroy_view: function() {
 
-	    // COMPLETELY UNBIND THE VIEW
+    destroyView: function() {
 	    this.undelegateEvents();
-
 	    this.$el.removeData().unbind();
-	    // Remove view from DOM
 	    this.remove();
 	    Backbone.View.prototype.remove.call(this);
-
 	}
 });
 
@@ -31840,44 +31805,44 @@ Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		console.log('sound queue view got activated');
 	},
+
 	render: function() {
 		this.$el.html(template);
-		this.makeSortable();
+		this.sortable();
 		return this;
 	},
-	makeSortable: function() {
+
+	sortable: function() {
 	    this.$( ".upnext-list" ).sortable({
 	    	items: "li:not(.ui-state-disabled)",
+
 	    	update: function(event, ui) {
-	    		// var order = $(this).sortable('toArray', {attribute: 'value'});
                 var order = $('.upnext-list').sortable('toArray');
-                console.log(order);
                 for (var i = 0; i < order.length; i++) {
                 	order[i] = order[i].substring(4);
                 }
+
                 oldPositionIndexArray = [];
                 order.forEach(function(ID) {
 				    var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(ID);
 				    oldPositionIndexArray.push(index)
 				});
-				console.log(order);
+
 				newSoundArray = [Artists.queueArray[0]];
 				oldPositionIndexArray.forEach(function(index) {
 					newSoundArray.push(Artists.queueArray[index])
 				});
-				console.log(newSoundArray);
+
 				Artists.queueArray = newSoundArray;
             }
 	    });
+
 	    $( ".upnext-list" ).disableSelection();
+
 	    $('.glyphicon-step-forward').unbind('click').click(function(e) {
 			soundID = Artists.queueArray[0].id;
 			soundManager.stop(soundID);
-			// console.log(Artists.queueArray);
-			console.log(Artists.queueArray);
-			// console.log('got clicked');
 		});
 	}
 });
@@ -31892,7 +31857,7 @@ __p+='<div class="album-detail-bg" \n    style="\n        background: url(\''+
 ((__t=( artist ))==null?'':__t)+
 '</span>\n    <h1>'+
 ((__t=( name ))==null?'':__t)+
-'</h1>\n</div>\n\'</h1>\\n  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aliquam erat in ante malesuada, facilisis semper nulla semper. Phasellus sapien neque, faucibus in malesuada quis, lacinia et libero. Sed sed turpis tellus. Etiam ac aliquam tortor, eleifend rhoncus metus. Ut turpis massa, sollicitudin sit amet molestie a, posuere sit amet nisl. Mauris tincidunt cursus posuere. Nam commodo libero quis lacus sodales, nec feugiat ante posuere. Donec pulvinar auctor commodo. Donec egestas diam ut mi adipiscing, quis lacinia mauris condimentum. Quisque quis odio venenatis, venenatis nisi a, vehicula ipsum. Etiam at nisl eu felis vulputate porta.</p>\\n  <p>Fusce ut placerat eros. Aliquam consequat in augue sed convallis. Donec orci urna, tincidunt vel dui at, elementum semper dolor. Donec tincidunt risus sed magna dictum, quis luctus metus volutpat. Donec accumsan et nunc vulputate accumsan. Vestibulum tempor, erat in mattis fringilla, elit urna ornare nunc, vel pretium elit sem quis orci. Vivamus condimentum dictum tempor. Nam at est ante. Sed lobortis et lorem in sagittis. In suscipit in est et vehicula.</p> -->\\n\\n</div>\';\n}\n';
+'</h1>\n</div>\n';
 }
 return __p;
 };
@@ -31901,7 +31866,7 @@ return __p;
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<!-- Right menu element-->\n<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right">\n<h3>up next</h3>\n<ul class="upnext-list">\n</ul>\n</nav>';
+__p+='<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right">\n    <h3>up next</h3>\n    <ul class="upnext-list"> </ul>\n</nav>\n';
 }
 return __p;
 };

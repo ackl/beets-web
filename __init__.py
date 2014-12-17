@@ -284,7 +284,7 @@ def stats():
 
 @app.route('/')
 def home():
-    return flask.render_template('23beets.html')
+    return flask.render_template('index.html')
 
 
 @app.route('/images/<filename>')

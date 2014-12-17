@@ -7,17 +7,16 @@ var Better = require('./albumExpanded');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		$('#progress-bar').click(function() {
-			console.log('clicked outer div');
-		});
-		$('.progBar').click(function() {console.log('clicked inner div')});
 	},
+
 	events: {
 		'mouseover': 'hover',
 		'mouseleave': 'mouseout',
 		'click': 'clicked'
 	},
+
 	className: 'square bg',
+
 	render: function() {
 		var that = this;
 		var albumArt = this.getArtURL(this.model.id);
@@ -34,15 +33,19 @@ module.exports = Backbone.View.extend({
 		});
 		return this;
 	},
+
 	getArtURL: function(id) {
         return "/album/"+id+"/art";
     },
+
     hover: function() {
     	this.$('.content').slideDown('fast');
     },
+
     mouseout: function() {
     	this.$('.content').slideUp();
     },
+
     clicked: function() {
         var albumArt = this.getArtURL(this.model.id);
         this.albumView = new Better({model: this.model});
