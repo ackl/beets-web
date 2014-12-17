@@ -2,7 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
-var Artists = require('../collections/artists');
+var Artists = require('../../../collections/artists');
 var app = app || {};
 
 module.exports = Backbone.View.extend({

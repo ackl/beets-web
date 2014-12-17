@@ -2,7 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 appRouter = require('./routers/router');
-var ArtistListView = require('./views/artistlistview');
+var ArtistListView = require('./views/artists/artists');
 var Artists = require('./collections/artists');
 
 var app = app || {};

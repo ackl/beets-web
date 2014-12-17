@@ -31241,7 +31241,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 appRouter = require('./routers/router');
-var ArtistListView = require('./views/artistlistview');
+var ArtistListView = require('./views/artists/artists');
 var Artists = require('./collections/artists');
 
 var app = app || {};
@@ -31252,7 +31252,8 @@ $(document).ready(function() {
     Backbone.history.start();
         app.view = new ArtistListView({collection: Artists});
 });
-},{"./collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./routers/router":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/routers/router.js","./views/artistlistview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js":[function(require,module,exports){
+
+},{"./collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./routers/router":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/routers/router.js","./views/artists/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31290,9 +31291,9 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var ArtistListView = require('../views/artistList');
+var ArtistListView = require('../views/artists/artists.js');
 var Artists = require('../collections/artists');
-var ArtistAlbumsView = require('../views/artistAlbums');
+var ArtistAlbumsView = require('../views/albums/albums');
 // var ArtistAlbumsView = require('../views/artistalbumsview');
 // var app = app || {};
 
@@ -31321,12 +31322,155 @@ module.exports = Backbone.Router.extend({
     }
 });
 
-},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../views/artistAlbums":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbums.js","../views/artistList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistList.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js":[function(require,module,exports){
+},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../views/albums/albums":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albums.js","../views/artists/artists.js":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/album.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
-var Artists = require('../collections/artists');
+var AlbumSongListView = require('./songs/songs');
+var Better = require('./albumExpanded');
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		$('#progress-bar').click(function() {
+			console.log('clicked outer div');
+		});
+		$('.progBar').click(function() {console.log('clicked inner div')});
+	},
+	events: {
+		'mouseover': 'hover',
+		'mouseleave': 'mouseout',
+		'click': 'clicked'
+	},
+	className: 'square bg',
+	render: function() {
+		var that = this;
+		var albumArt = this.getArtURL(this.model.id);
+
+		$.ajax({
+			url: albumArt,
+			success: function() {
+				that.$el.css('background-image', 'url(\''+albumArt+'\')');
+			},
+			error: function() {
+				that.$el.css('background-image', 'url(\'http://i.imgur.com/uHgieji.png\')');
+				that.$el.css('filter', 'hue-rotate(120deg)')
+			}
+		});
+		return this;
+	},
+	getArtURL: function(id) {
+        return "/album/"+id+"/art";
+    },
+    hover: function() {
+    	this.$('.content').slideDown('fast');
+    },
+    mouseout: function() {
+    	this.$('.content').slideUp();
+    },
+    clicked: function() {
+        var albumArt = this.getArtURL(this.model.id);
+        this.albumView = new Better({model: this.model});
+
+        $('#album-detail').html(this.albumView.render().el);
+
+        $('html, body').animate({scrollTop : 0},300);
+    }
+});
+
+},{"./albumExpanded":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albumExpanded.js","./songs/songs":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/songs.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albumExpanded.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var template = require('../../../templates/albumsonglisttemplate.html');
+var AlbumSongListView = require('./songs/songs');
+Backbone.$ = $;
+
+
+var AlbumSongItemView = require('./songs/songs');
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		console.log(this.model.art);
+	},
+	events: {
+		"click #shrink-album-detail": "shrink"
+	},
+	shrink: function() {
+		this.$('.album-detail-content').empty();
+		this.$el.animate({width:'toggle'},550);
+		this.$('.album-detail-content').animate({width:'toggle'},550);
+	},
+	render: function() {
+		var theSongs = new AlbumSongListView({collection: this.model.items});
+		this.$el.html(template({
+			name: this.model.album,
+			artist: this.model.albumartist,
+			url: '/album/'+this.model.id+'/art'
+		}));
+		this.$('.album-detail-content').append(theSongs.render().el).append(' <button class="btn shrink-btn" id="shrink-album-detail">shrink</button>');
+		return this;
+	}
+});
+
+
+
+},{"../../../templates/albumsonglisttemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html","./songs/songs":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/songs.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/albums.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var ArtistAlbumView = require('./album');
+Backbone.$ = $;
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		// this.render();
+	},
+	events: {
+		"click .home": "goHome"
+	},
+	render: function() {
+		console.log(this.model);
+		console.log('that as model');
+		// $('#nowplaying').html(this.model[0].albumartist);
+		// $('h1').after('<h2 class="artist-heading">'+this.model[0].albumartist+'</h2>');
+		$('h1').addClass('home');
+		this.model.forEach(function(album){
+		var albumArt = this.getArtURL(album.id);
+		var albumArtView = new ArtistAlbumView({model: album});
+		this.$el.append(albumArtView.render().el);
+		// this.$el.append('<div class="square bg" style="background-image: url(\''+albumArt+'\')"><div class="content"><div class="table"><div class="table-cell"><div>'+album.album+'<div></div></div></div></div>');
+		}, this);
+
+		return this
+	},
+	getArtURL: function(id) {
+        return "/album/"+id+"/art";
+    },
+    goHome: function() {
+    	console.log('at go home');
+    	this.destroy_view();
+    	Backbone.history.navigate('', true);
+    },
+    destroy_view: function() {
+
+	    // COMPLETELY UNBIND THE VIEW
+	    this.undelegateEvents();
+
+	    this.$el.removeData().unbind();
+	    // Remove view from DOM
+	    this.remove();
+	    Backbone.View.prototype.remove.call(this);
+
+	}
+});
+
+},{"./album":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/album.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/song.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+Backbone.$ = $;
+var Artists = require('../../../collections/artists');
 var app = app || {};
 
 module.exports = Backbone.View.extend({
@@ -31542,13 +31686,13 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js":[function(require,module,exports){
+},{"../../../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/songs.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumSongItem');
+var AlbumSongItemView = require('./song');
 
 module.exports = Backbone.View.extend({
 	tagName: 'ul',
@@ -31570,184 +31714,7 @@ module.exports = Backbone.View.extend({
 	}
 });
 
-},{"./albumSongItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbum.js":[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var _ = require('underscore');
-Backbone.$ = $;
-var AlbumSongListView = require('./albumSongList');
-var Better = require('./betterAlbum');
-
-module.exports = Backbone.View.extend({
-	initialize: function() {
-		$('#progress-bar').click(function() {
-			console.log('clicked outer div');
-		});
-		$('.progBar').click(function() {console.log('clicked inner div')});
-	},
-	events: {
-		'mouseover': 'hover',
-		'mouseleave': 'mouseout',
-		'click': 'clicked'
-	},
-	className: 'square bg',
-	render: function() {
-		var that = this;
-		var albumArt = this.getArtURL(this.model.id);
-
-		$.ajax({
-			url: albumArt,
-			success: function() {
-				that.$el.css('background-image', 'url(\''+albumArt+'\')');
-			},
-			error: function() {
-				that.$el.css('background-image', 'url(\'http://i.imgur.com/uHgieji.png\')');
-				that.$el.css('filter', 'hue-rotate(120deg)')
-			}
-		});
-		return this;
-	},
-	getArtURL: function(id) {
-        return "/album/"+id+"/art";
-    },
-    hover: function() {
-    	this.$('.content').slideDown('fast');
-    },
-    mouseout: function() {
-    	this.$('.content').slideUp();
-    },
-    clicked: function() {
-        var albumArt = this.getArtURL(this.model.id);
-        this.albumView = new Better({model: this.model});
-
-        $('#album-detail').html(this.albumView.render().el);
-
-        $('html, body').animate({scrollTop : 0},300);
-    }
-});
-
-},{"./albumSongList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js","./betterAlbum":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/betterAlbum.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbums.js":[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var _ = require('underscore');
-var ArtistAlbumView = require('./artistAlbum');
-Backbone.$ = $;
-
-module.exports = Backbone.View.extend({
-	initialize: function() {
-		// this.render();
-	},
-	events: {
-		"click .home": "goHome"
-	},
-	render: function() {
-		console.log(this.model);
-		console.log('that as model');
-		// $('#nowplaying').html(this.model[0].albumartist);
-		// $('h1').after('<h2 class="artist-heading">'+this.model[0].albumartist+'</h2>');
-		$('h1').addClass('home');
-		this.model.forEach(function(album){
-		var albumArt = this.getArtURL(album.id);
-		var albumArtView = new ArtistAlbumView({model: album});
-		this.$el.append(albumArtView.render().el);
-		// this.$el.append('<div class="square bg" style="background-image: url(\''+albumArt+'\')"><div class="content"><div class="table"><div class="table-cell"><div>'+album.album+'<div></div></div></div></div>');
-		}, this);
-
-		return this
-	},
-	getArtURL: function(id) {
-        return "/album/"+id+"/art";
-    },
-    goHome: function() {
-    	console.log('at go home');
-    	this.destroy_view();
-    	Backbone.history.navigate('', true);
-    },
-    destroy_view: function() {
-
-	    // COMPLETELY UNBIND THE VIEW
-	    this.undelegateEvents();
-
-	    this.$el.removeData().unbind();
-	    // Remove view from DOM
-	    this.remove();
-	    Backbone.View.prototype.remove.call(this);
-
-	}
-});
-
-},{"./artistAlbum":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbum.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistList.js":[function(require,module,exports){
-var Backbone = require('backbone');
-var _ = require('underscore');
-var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistListItem');
-var SoundQueueView = require('./soundQueue');
-var $ = require('../jquery');
-Backbone.$ = $;
-// var Artists = new Artists();
-
-module.exports = Backbone.View.extend({
-    tagName: 'ul',
-    id: 'artist-list',
-    initialize: function() {
-        this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(Backbone.eventBus, 'showArtistList', this.showArtistList);
-        var soundQueue = new SoundQueueView;
-        soundQueue.render();
-        $('body').append(soundQueue.render().el);
-    },
-    showArtistList: function() {
-        this.collection.fetch({reset:true});
-        $('.shrink-btn').click();
-    },
-    render: function() {
-        $('.artist-heading').slideUp('fast');
-    	var artistNames = this.collection.models[0].attributes.artist_names;
-        this.$el.empty();
-        var getRandomColor = this.getRandomColor;
-    	var that = this.$el;
-        artistNames.sort();
-        var firstLetters = [];
-        artistNames.forEach(function(name) {
-            firstLetters.push(name[0])
-        });
-        firstLetters = _.uniq(firstLetters, false);
-        that.append('<h3 class="letter-heads">'+firstLetters[0]+'</h3>');
-        var counter = 1;
-    	artistNames.forEach(function(artist) {
-            if (artist[0] == firstLetters[counter]) {
-                that.append('<h3 class="letter-heads">'+firstLetters[counter]+'</h3>');
-                counter++
-            }
-    		  that.append(new ArtistItemView({model: artist}).render().el);
-    	});
-        // console.log(this.$el);
-        $('.23beets').html(this.$el);
-        // console.log(that);
-        return this;
-    },
-    getRandomColor: function () {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    },
-    destroy_view: function() {
-
-	    // COMPLETELY UNBIND THE VIEW
-	    this.undelegateEvents();
-
-	    this.$el.removeData().unbind();
-	    // Remove view from DOM
-	    this.remove();
-	    Backbone.View.prototype.remove.call(this);
-
-	}
-});
-
-},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js","./artistListItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js","./soundQueue":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js":[function(require,module,exports){
+},{"./song":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albums/songs/song.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artist.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31760,15 +31727,14 @@ module.exports = Backbone.View.extend({
 		return this;
 	}
 });
-},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js":[function(require,module,exports){
-module.exports=require("/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js")
-},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistview.js":[function(require,module,exports){
+
+},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artists.js":[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
-var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistlistitemview');
-var SoundQueueView = require('./soundqueueview');
-var $ = require('../jquery');
+var Artists = require('../../collections/artists');
+var ArtistItemView = require('./artist');
+var SoundQueueView = require('./../soundQueue');
+var $ = require('../../jquery');
 Backbone.$ = $;
 // var Artists = new Artists();
 
@@ -31832,48 +31798,13 @@ module.exports = Backbone.View.extend({
 
 	}
 });
-},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js","./artistlistitemview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js","./soundqueueview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundqueueview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/betterAlbum.js":[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var _ = require('underscore');
-var template = require('../../templates/albumsonglisttemplate.html');
-var AlbumSongListView = require('./albumSongList');
-Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumSongItem');
-
-module.exports = Backbone.View.extend({
-	initialize: function() {
-		console.log(this.model.art);
-	},
-	events: {
-		"click #shrink-album-detail": "shrink"
-	},
-	shrink: function() {
-		this.$('.album-detail-content').empty();
-		this.$el.animate({width:'toggle'},550);
-		this.$('.album-detail-content').animate({width:'toggle'},550);
-	},
-	render: function() {
-		var theSongs = new AlbumSongListView({collection: this.model.items});
-		this.$el.html(template({
-			name: this.model.album,
-			artist: this.model.albumartist,
-			url: '/album/'+this.model.id+'/art'
-		}));
-		this.$('.album-detail-content').append(theSongs.render().el).append(' <button class="btn shrink-btn" id="shrink-album-detail">shrink</button>');
-		return this;
-	}
-});
-
-
-
-},{"../../templates/albumsonglisttemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html","./albumSongItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js","./albumSongList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js":[function(require,module,exports){
+},{"../../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../../jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js","./../soundQueue":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js","./artist":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artist.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistListItem');
+var ArtistItemView = require('./artists/artist.js');
 var template = require('../../templates/soundqueuetemplate.html');
 Backbone.$ = $;
 
@@ -31921,59 +31852,7 @@ module.exports = Backbone.View.extend({
 	}
 });
 
-},{"../../templates/soundqueuetemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./artistListItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundqueueview.js":[function(require,module,exports){
-var $ = require('jquery');
-var Backbone = require('backbone');
-var _ = require('underscore');
-var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistlistitemview');
-var template = require('../../templates/soundqueuetemplate.html');
-Backbone.$ = $;
-
-module.exports = Backbone.View.extend({
-	initialize: function() {
-		console.log('sound queue view got activated');
-	},
-	render: function() {
-		this.$el.html(template);
-		this.makeSortable();
-		return this;
-	},
-	makeSortable: function() {
-	    this.$( ".upnext-list" ).sortable({
-	    	items: "li:not(.ui-state-disabled)",
-	    	update: function(event, ui) {
-	    		// var order = $(this).sortable('toArray', {attribute: 'value'});
-                var order = $('.upnext-list').sortable('toArray');
-                console.log(order);
-                for (var i = 0; i < order.length; i++) {
-                	order[i] = order[i].substring(4);
-                }
-                oldPositionIndexArray = [];
-                order.forEach(function(ID) {
-				    var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(ID);
-				    oldPositionIndexArray.push(index)
-				});
-				console.log(order);
-				newSoundArray = [Artists.queueArray[0]];
-				oldPositionIndexArray.forEach(function(index) {
-					newSoundArray.push(Artists.queueArray[index])
-				});
-				console.log(newSoundArray);
-				Artists.queueArray = newSoundArray;
-            }
-	    });
-	    $( ".upnext-list" ).disableSelection();
-	    $('.glyphicon-step-forward').unbind('click').click(function(e) {
-			soundID = Artists.queueArray[0].id;
-			soundManager.stop(soundID);
-			// console.log(Artists.queueArray);
-			console.log(Artists.queueArray);
-			// console.log('got clicked');
-		});
-	}
-});
-},{"../../templates/soundqueuetemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./artistlistitemview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html":[function(require,module,exports){
+},{"../../templates/soundqueuetemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./artists/artist.js":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artists/artist.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html":[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){

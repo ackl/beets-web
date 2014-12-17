@@ -3,9 +3,9 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var ArtistListView = require('../views/artistList');
+var ArtistListView = require('../views/artists/artists.js');
 var Artists = require('../collections/artists');
-var ArtistAlbumsView = require('../views/artistAlbums');
+var ArtistAlbumsView = require('../views/albums/albums');
 // var ArtistAlbumsView = require('../views/artistalbumsview');
 // var app = app || {};
 

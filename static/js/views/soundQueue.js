@@ -2,7 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistListItem');
+var ArtistItemView = require('./artists/artist.js');
 var template = require('../../templates/soundqueuetemplate.html');
 Backbone.$ = $;
 

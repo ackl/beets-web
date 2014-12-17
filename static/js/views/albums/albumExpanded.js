@@ -1,11 +1,12 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
-var template = require('../../templates/albumsonglisttemplate.html');
-var AlbumSongListView = require('./albumSongList');
+var template = require('../../../templates/albumsonglisttemplate.html');
+var AlbumSongListView = require('./songs/songs');
 Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumSongItem');
+
+var AlbumSongItemView = require('./songs/songs');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {

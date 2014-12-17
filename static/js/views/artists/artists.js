@@ -1,9 +1,9 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
-var Artists = require('../collections/artists');
-var ArtistItemView = require('./artistListItem');
-var SoundQueueView = require('./soundQueue');
-var $ = require('../jquery');
+var Artists = require('../../collections/artists');
+var ArtistItemView = require('./artist');
+var SoundQueueView = require('./../soundQueue');
+var $ = require('../../jquery');
 Backbone.$ = $;
 // var Artists = new Artists();
 
