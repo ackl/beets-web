@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
-var ArtistAlbumView = require('./artistalbumview');
+var ArtistAlbumView = require('./artistAlbum');
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({

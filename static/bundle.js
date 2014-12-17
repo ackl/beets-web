@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js":[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1608,21 +1608,30 @@
 
 }));
 
-},{"underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/node_modules/bootstrap/dist/js/bootstrap.js":[function(require,module,exports){
+},{"underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/bootstrap/dist/js/bootstrap.js":[function(require,module,exports){
 (function (global){
 
 ; require("jquery");
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*!
- * Bootstrap v3.2.0 (http://getbootstrap.com)
+ * Bootstrap v3.3.1 (http://getbootstrap.com)
  * Copyright 2011-2014 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript requires jQuery') }
+if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
+
++function ($) {
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher')
+  }
+}(jQuery);
 
 /* ========================================================================
- * Bootstrap: transition.js v3.2.0
+ * Bootstrap: transition.js v3.3.1
  * http://getbootstrap.com/javascript/#transitions
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -1682,7 +1691,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: alert.js v3.2.0
+ * Bootstrap: alert.js v3.3.1
  * http://getbootstrap.com/javascript/#alerts
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -1701,7 +1710,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $(el).on('click', dismiss, this.close)
   }
 
-  Alert.VERSION = '3.2.0'
+  Alert.VERSION = '3.3.1'
+
+  Alert.TRANSITION_DURATION = 150
 
   Alert.prototype.close = function (e) {
     var $this    = $(this)
@@ -1717,7 +1728,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     if (e) e.preventDefault()
 
     if (!$parent.length) {
-      $parent = $this.hasClass('alert') ? $this : $this.parent()
+      $parent = $this.closest('.alert')
     }
 
     $parent.trigger(e = $.Event('close.bs.alert'))
@@ -1734,7 +1745,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $.support.transition && $parent.hasClass('fade') ?
       $parent
         .one('bsTransitionEnd', removeElement)
-        .emulateTransitionEnd(150) :
+        .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
       removeElement()
   }
 
@@ -1775,7 +1786,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: button.js v3.2.0
+ * Bootstrap: button.js v3.3.1
  * http://getbootstrap.com/javascript/#buttons
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -1795,7 +1806,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.isLoading = false
   }
 
-  Button.VERSION  = '3.2.0'
+  Button.VERSION  = '3.3.1'
 
   Button.DEFAULTS = {
     loadingText: 'loading...'
@@ -1811,10 +1822,10 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     if (data.resetText == null) $el.data('resetText', $el[val]())
 
-    $el[val](data[state] == null ? this.options[state] : data[state])
-
     // push to event loop to allow forms to submit
     setTimeout($.proxy(function () {
+      $el[val](data[state] == null ? this.options[state] : data[state])
+
       if (state == 'loadingText') {
         this.isLoading = true
         $el.addClass(d).attr(d, d)
@@ -1836,6 +1847,8 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
         else $parent.find('.active').removeClass('active')
       }
       if (changed) $input.prop('checked', !this.$element.hasClass('active')).trigger('change')
+    } else {
+      this.$element.attr('aria-pressed', !this.$element.hasClass('active'))
     }
 
     if (changed) this.$element.toggleClass('active')
@@ -1876,17 +1889,21 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   // BUTTON DATA-API
   // ===============
 
-  $(document).on('click.bs.button.data-api', '[data-toggle^="button"]', function (e) {
-    var $btn = $(e.target)
-    if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
-    Plugin.call($btn, 'toggle')
-    e.preventDefault()
-  })
+  $(document)
+    .on('click.bs.button.data-api', '[data-toggle^="button"]', function (e) {
+      var $btn = $(e.target)
+      if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
+      Plugin.call($btn, 'toggle')
+      e.preventDefault()
+    })
+    .on('focus.bs.button.data-api blur.bs.button.data-api', '[data-toggle^="button"]', function (e) {
+      $(e.target).closest('.btn').toggleClass('focus', /^focus(in)?$/.test(e.type))
+    })
 
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: carousel.js v3.2.0
+ * Bootstrap: carousel.js v3.3.1
  * http://getbootstrap.com/javascript/#carousel
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -1901,7 +1918,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   // =========================
 
   var Carousel = function (element, options) {
-    this.$element    = $(element).on('keydown.bs.carousel', $.proxy(this.keydown, this))
+    this.$element    = $(element)
     this.$indicators = this.$element.find('.carousel-indicators')
     this.options     = options
     this.paused      =
@@ -1910,20 +1927,26 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.$active     =
     this.$items      = null
 
-    this.options.pause == 'hover' && this.$element
+    this.options.keyboard && this.$element.on('keydown.bs.carousel', $.proxy(this.keydown, this))
+
+    this.options.pause == 'hover' && !('ontouchstart' in document.documentElement) && this.$element
       .on('mouseenter.bs.carousel', $.proxy(this.pause, this))
       .on('mouseleave.bs.carousel', $.proxy(this.cycle, this))
   }
 
-  Carousel.VERSION  = '3.2.0'
+  Carousel.VERSION  = '3.3.1'
+
+  Carousel.TRANSITION_DURATION = 600
 
   Carousel.DEFAULTS = {
     interval: 5000,
     pause: 'hover',
-    wrap: true
+    wrap: true,
+    keyboard: true
   }
 
   Carousel.prototype.keydown = function (e) {
+    if (/input|textarea/i.test(e.target.tagName)) return
     switch (e.which) {
       case 37: this.prev(); break
       case 39: this.next(); break
@@ -1950,6 +1973,13 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     return this.$items.index(item || this.$active)
   }
 
+  Carousel.prototype.getItemForDirection = function (direction, active) {
+    var delta = direction == 'prev' ? -1 : 1
+    var activeIndex = this.getItemIndex(active)
+    var itemIndex = (activeIndex + delta) % this.$items.length
+    return this.$items.eq(itemIndex)
+  }
+
   Carousel.prototype.to = function (pos) {
     var that        = this
     var activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'))
@@ -1959,7 +1989,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     if (this.sliding)       return this.$element.one('slid.bs.carousel', function () { that.to(pos) }) // yes, "slid"
     if (activeIndex == pos) return this.pause().cycle()
 
-    return this.slide(pos > activeIndex ? 'next' : 'prev', $(this.$items[pos]))
+    return this.slide(pos > activeIndex ? 'next' : 'prev', this.$items.eq(pos))
   }
 
   Carousel.prototype.pause = function (e) {
@@ -1987,7 +2017,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   Carousel.prototype.slide = function (type, next) {
     var $active   = this.$element.find('.item.active')
-    var $next     = next || $active[type]()
+    var $next     = next || this.getItemForDirection(type, $active)
     var isCycling = this.interval
     var direction = type == 'next' ? 'left' : 'right'
     var fallback  = type == 'next' ? 'first' : 'last'
@@ -2033,7 +2063,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
             that.$element.trigger(slidEvent)
           }, 0)
         })
-        .emulateTransitionEnd($active.css('transition-duration').slice(0, -1) * 1000)
+        .emulateTransitionEnd(Carousel.TRANSITION_DURATION)
     } else {
       $active.removeClass('active')
       $next.addClass('active')
@@ -2082,7 +2112,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   // CAROUSEL DATA-API
   // =================
 
-  $(document).on('click.bs.carousel.data-api', '[data-slide], [data-slide-to]', function (e) {
+  var clickHandler = function (e) {
     var href
     var $this   = $(this)
     var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) // strip for ie7
@@ -2098,7 +2128,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     }
 
     e.preventDefault()
-  })
+  }
+
+  $(document)
+    .on('click.bs.carousel.data-api', '[data-slide]', clickHandler)
+    .on('click.bs.carousel.data-api', '[data-slide-to]', clickHandler)
 
   $(window).on('load', function () {
     $('[data-ride="carousel"]').each(function () {
@@ -2110,7 +2144,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: collapse.js v3.2.0
+ * Bootstrap: collapse.js v3.3.1
  * http://getbootstrap.com/javascript/#collapse
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -2127,16 +2161,25 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   var Collapse = function (element, options) {
     this.$element      = $(element)
     this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $(this.options.trigger).filter('[href="#' + element.id + '"], [data-target="#' + element.id + '"]')
     this.transitioning = null
 
-    if (this.options.parent) this.$parent = $(this.options.parent)
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
     if (this.options.toggle) this.toggle()
   }
 
-  Collapse.VERSION  = '3.2.0'
+  Collapse.VERSION  = '3.3.1'
+
+  Collapse.TRANSITION_DURATION = 350
 
   Collapse.DEFAULTS = {
-    toggle: true
+    toggle: true,
+    trigger: '[data-toggle="collapse"]'
   }
 
   Collapse.prototype.dimension = function () {
@@ -2147,17 +2190,21 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   Collapse.prototype.show = function () {
     if (this.transitioning || this.$element.hasClass('in')) return
 
+    var activesData
+    var actives = this.$parent && this.$parent.find('> .panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
     var startEvent = $.Event('show.bs.collapse')
     this.$element.trigger(startEvent)
     if (startEvent.isDefaultPrevented()) return
 
-    var actives = this.$parent && this.$parent.find('> .panel > .in')
-
     if (actives && actives.length) {
-      var hasData = actives.data('bs.collapse')
-      if (hasData && hasData.transitioning) return
       Plugin.call(actives, 'hide')
-      hasData || actives.data('bs.collapse', null)
+      activesData || actives.data('bs.collapse', null)
     }
 
     var dimension = this.dimension()
@@ -2165,6 +2212,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.$element
       .removeClass('collapse')
       .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
 
     this.transitioning = 1
 
@@ -2183,7 +2235,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     this.$element
       .one('bsTransitionEnd', $.proxy(complete, this))
-      .emulateTransitionEnd(350)[dimension](this.$element[0][scrollSize])
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
   }
 
   Collapse.prototype.hide = function () {
@@ -2199,17 +2251,21 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     this.$element
       .addClass('collapsing')
-      .removeClass('collapse')
-      .removeClass('in')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
 
     this.transitioning = 1
 
     var complete = function () {
       this.transitioning = 0
       this.$element
-        .trigger('hidden.bs.collapse')
         .removeClass('collapsing')
         .addClass('collapse')
+        .trigger('hidden.bs.collapse')
     }
 
     if (!$.support.transition) return complete.call(this)
@@ -2217,11 +2273,38 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.$element
       [dimension](0)
       .one('bsTransitionEnd', $.proxy(complete, this))
-      .emulateTransitionEnd(350)
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
   }
 
   Collapse.prototype.toggle = function () {
     this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
   }
 
 
@@ -2234,7 +2317,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       var data    = $this.data('bs.collapse')
       var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
 
-      if (!data && options.toggle && option == 'show') option = !option
+      if (!data && options.toggle && option == 'show') options.toggle = false
       if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
       if (typeof option == 'string') data[option]()
     })
@@ -2259,21 +2342,13 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   // =================
 
   $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
-    var href
     var $this   = $(this)
-    var target  = $this.attr('data-target')
-        || e.preventDefault()
-        || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
-    var $target = $(target)
-    var data    = $target.data('bs.collapse')
-    var option  = data ? 'toggle' : $this.data()
-    var parent  = $this.attr('data-parent')
-    var $parent = parent && $(parent)
 
-    if (!data || !data.transitioning) {
-      if ($parent) $parent.find('[data-toggle="collapse"][data-parent="' + parent + '"]').not($this).addClass('collapsed')
-      $this[$target.hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
-    }
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $.extend({}, $this.data(), { trigger: this })
 
     Plugin.call($target, option)
   })
@@ -2281,7 +2356,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: dropdown.js v3.2.0
+ * Bootstrap: dropdown.js v3.3.1
  * http://getbootstrap.com/javascript/#dropdowns
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -2301,7 +2376,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $(element).on('click.bs.dropdown', this.toggle)
   }
 
-  Dropdown.VERSION = '3.2.0'
+  Dropdown.VERSION = '3.3.1'
 
   Dropdown.prototype.toggle = function (e) {
     var $this = $(this)
@@ -2324,7 +2399,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
       if (e.isDefaultPrevented()) return
 
-      $this.trigger('focus')
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
 
       $parent
         .toggleClass('open')
@@ -2335,7 +2412,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   }
 
   Dropdown.prototype.keydown = function (e) {
-    if (!/(38|40|27)/.test(e.keyCode)) return
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
 
     var $this = $(this)
 
@@ -2347,7 +2424,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var $parent  = getParent($this)
     var isActive = $parent.hasClass('open')
 
-    if (!isActive || (isActive && e.keyCode == 27)) {
+    if ((!isActive && e.which != 27) || (isActive && e.which == 27)) {
       if (e.which == 27) $parent.find(toggle).trigger('focus')
       return $this.trigger('click')
     }
@@ -2357,10 +2434,10 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     if (!$items.length) return
 
-    var index = $items.index($items.filter(':focus'))
+    var index = $items.index(e.target)
 
-    if (e.keyCode == 38 && index > 0)                 index--                        // up
-    if (e.keyCode == 40 && index < $items.length - 1) index++                        // down
+    if (e.which == 38 && index > 0)                 index--                        // up
+    if (e.which == 40 && index < $items.length - 1) index++                        // down
     if (!~index)                                      index = 0
 
     $items.eq(index).trigger('focus')
@@ -2370,11 +2447,17 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     if (e && e.which === 3) return
     $(backdrop).remove()
     $(toggle).each(function () {
-      var $parent = getParent($(this))
+      var $this         = $(this)
+      var $parent       = getParent($this)
       var relatedTarget = { relatedTarget: this }
+
       if (!$parent.hasClass('open')) return
+
       $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
       if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
       $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
     })
   }
@@ -2428,12 +2511,14 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     .on('click.bs.dropdown.data-api', clearMenus)
     .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
     .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
-    .on('keydown.bs.dropdown.data-api', toggle + ', [role="menu"], [role="listbox"]', Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '[role="menu"]', Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '[role="listbox"]', Dropdown.prototype.keydown)
 
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: modal.js v3.2.0
+ * Bootstrap: modal.js v3.3.1
  * http://getbootstrap.com/javascript/#modals
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -2464,7 +2549,10 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     }
   }
 
-  Modal.VERSION  = '3.2.0'
+  Modal.VERSION  = '3.3.1'
+
+  Modal.TRANSITION_DURATION = 300
+  Modal.BACKDROP_TRANSITION_DURATION = 150
 
   Modal.DEFAULTS = {
     backdrop: true,
@@ -2487,10 +2575,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.isShown = true
 
     this.checkScrollbar()
+    this.setScrollbar()
     this.$body.addClass('modal-open')
 
-    this.setScrollbar()
     this.escape()
+    this.resize()
 
     this.$element.on('click.dismiss.bs.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
 
@@ -2504,6 +2593,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       that.$element
         .show()
         .scrollTop(0)
+
+      if (that.options.backdrop) that.adjustBackdrop()
+      that.adjustDialog()
 
       if (transition) {
         that.$element[0].offsetWidth // force reflow
@@ -2522,7 +2614,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
           .one('bsTransitionEnd', function () {
             that.$element.trigger('focus').trigger(e)
           })
-          .emulateTransitionEnd(300) :
+          .emulateTransitionEnd(Modal.TRANSITION_DURATION) :
         that.$element.trigger('focus').trigger(e)
     })
   }
@@ -2538,10 +2630,8 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     this.isShown = false
 
-    this.$body.removeClass('modal-open')
-
-    this.resetScrollbar()
     this.escape()
+    this.resize()
 
     $(document).off('focusin.bs.modal')
 
@@ -2553,7 +2643,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $.support.transition && this.$element.hasClass('fade') ?
       this.$element
         .one('bsTransitionEnd', $.proxy(this.hideModal, this))
-        .emulateTransitionEnd(300) :
+        .emulateTransitionEnd(Modal.TRANSITION_DURATION) :
       this.hideModal()
   }
 
@@ -2569,11 +2659,19 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   Modal.prototype.escape = function () {
     if (this.isShown && this.options.keyboard) {
-      this.$element.on('keyup.dismiss.bs.modal', $.proxy(function (e) {
+      this.$element.on('keydown.dismiss.bs.modal', $.proxy(function (e) {
         e.which == 27 && this.hide()
       }, this))
     } else if (!this.isShown) {
-      this.$element.off('keyup.dismiss.bs.modal')
+      this.$element.off('keydown.dismiss.bs.modal')
+    }
+  }
+
+  Modal.prototype.resize = function () {
+    if (this.isShown) {
+      $(window).on('resize.bs.modal', $.proxy(this.handleUpdate, this))
+    } else {
+      $(window).off('resize.bs.modal')
     }
   }
 
@@ -2581,6 +2679,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var that = this
     this.$element.hide()
     this.backdrop(function () {
+      that.$body.removeClass('modal-open')
+      that.resetAdjustments()
+      that.resetScrollbar()
       that.$element.trigger('hidden.bs.modal')
     })
   }
@@ -2598,14 +2699,13 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       var doAnimate = $.support.transition && animate
 
       this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
-        .appendTo(this.$body)
-
-      this.$element.on('click.dismiss.bs.modal', $.proxy(function (e) {
-        if (e.target !== e.currentTarget) return
-        this.options.backdrop == 'static'
-          ? this.$element[0].focus.call(this.$element[0])
-          : this.hide.call(this)
-      }, this))
+        .prependTo(this.$element)
+        .on('click.dismiss.bs.modal', $.proxy(function (e) {
+          if (e.target !== e.currentTarget) return
+          this.options.backdrop == 'static'
+            ? this.$element[0].focus.call(this.$element[0])
+            : this.hide.call(this)
+        }, this))
 
       if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
 
@@ -2616,7 +2716,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       doAnimate ?
         this.$backdrop
           .one('bsTransitionEnd', callback)
-          .emulateTransitionEnd(150) :
+          .emulateTransitionEnd(Modal.BACKDROP_TRANSITION_DURATION) :
         callback()
 
     } else if (!this.isShown && this.$backdrop) {
@@ -2629,7 +2729,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       $.support.transition && this.$element.hasClass('fade') ?
         this.$backdrop
           .one('bsTransitionEnd', callbackRemove)
-          .emulateTransitionEnd(150) :
+          .emulateTransitionEnd(Modal.BACKDROP_TRANSITION_DURATION) :
         callbackRemove()
 
     } else if (callback) {
@@ -2637,14 +2737,43 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     }
   }
 
+  // these following methods are used to handle overflowing modals
+
+  Modal.prototype.handleUpdate = function () {
+    if (this.options.backdrop) this.adjustBackdrop()
+    this.adjustDialog()
+  }
+
+  Modal.prototype.adjustBackdrop = function () {
+    this.$backdrop
+      .css('height', 0)
+      .css('height', this.$element[0].scrollHeight)
+  }
+
+  Modal.prototype.adjustDialog = function () {
+    var modalIsOverflowing = this.$element[0].scrollHeight > document.documentElement.clientHeight
+
+    this.$element.css({
+      paddingLeft:  !this.bodyIsOverflowing && modalIsOverflowing ? this.scrollbarWidth : '',
+      paddingRight: this.bodyIsOverflowing && !modalIsOverflowing ? this.scrollbarWidth : ''
+    })
+  }
+
+  Modal.prototype.resetAdjustments = function () {
+    this.$element.css({
+      paddingLeft: '',
+      paddingRight: ''
+    })
+  }
+
   Modal.prototype.checkScrollbar = function () {
-    if (document.body.clientWidth >= window.innerWidth) return
-    this.scrollbarWidth = this.scrollbarWidth || this.measureScrollbar()
+    this.bodyIsOverflowing = document.body.scrollHeight > document.documentElement.clientHeight
+    this.scrollbarWidth = this.measureScrollbar()
   }
 
   Modal.prototype.setScrollbar = function () {
     var bodyPad = parseInt((this.$body.css('padding-right') || 0), 10)
-    if (this.scrollbarWidth) this.$body.css('padding-right', bodyPad + this.scrollbarWidth)
+    if (this.bodyIsOverflowing) this.$body.css('padding-right', bodyPad + this.scrollbarWidth)
   }
 
   Modal.prototype.resetScrollbar = function () {
@@ -2714,7 +2843,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: tooltip.js v3.2.0
+ * Bootstrap: tooltip.js v3.3.1
  * http://getbootstrap.com/javascript/#tooltip
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ========================================================================
@@ -2740,7 +2869,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.init('tooltip', element, options)
   }
 
-  Tooltip.VERSION  = '3.2.0'
+  Tooltip.VERSION  = '3.3.1'
+
+  Tooltip.TRANSITION_DURATION = 150
 
   Tooltip.DEFAULTS = {
     animation: true,
@@ -2818,6 +2949,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var self = obj instanceof this.constructor ?
       obj : $(obj.currentTarget).data('bs.' + this.type)
 
+    if (self && self.$tip && self.$tip.is(':visible')) {
+      self.hoverState = 'in'
+      return
+    }
+
     if (!self) {
       self = new this.constructor(obj.currentTarget, this.getDelegateOptions())
       $(obj.currentTarget).data('bs.' + this.type, self)
@@ -2860,7 +2996,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     if (this.hasContent() && this.enabled) {
       this.$element.trigger(e)
 
-      var inDom = $.contains(document.documentElement, this.$element[0])
+      var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0])
       if (e.isDefaultPrevented() || !inDom) return
       var that = this
 
@@ -2896,13 +3032,13 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
       if (autoPlace) {
         var orgPlacement = placement
-        var $parent      = this.$element.parent()
-        var parentDim    = this.getPosition($parent)
+        var $container   = this.options.container ? $(this.options.container) : this.$element.parent()
+        var containerDim = this.getPosition($container)
 
-        placement = placement == 'bottom' && pos.top   + pos.height       + actualHeight - parentDim.scroll > parentDim.height ? 'top'    :
-                    placement == 'top'    && pos.top   - parentDim.scroll - actualHeight < 0                                   ? 'bottom' :
-                    placement == 'right'  && pos.right + actualWidth      > parentDim.width                                    ? 'left'   :
-                    placement == 'left'   && pos.left  - actualWidth      < parentDim.left                                     ? 'right'  :
+        placement = placement == 'bottom' && pos.bottom + actualHeight > containerDim.bottom ? 'top'    :
+                    placement == 'top'    && pos.top    - actualHeight < containerDim.top    ? 'bottom' :
+                    placement == 'right'  && pos.right  + actualWidth  > containerDim.width  ? 'left'   :
+                    placement == 'left'   && pos.left   - actualWidth  < containerDim.left   ? 'right'  :
                     placement
 
         $tip
@@ -2915,14 +3051,17 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       this.applyPlacement(calculatedOffset, placement)
 
       var complete = function () {
+        var prevHoverState = that.hoverState
         that.$element.trigger('shown.bs.' + that.type)
         that.hoverState = null
+
+        if (prevHoverState == 'out') that.leave(that)
       }
 
       $.support.transition && this.$tip.hasClass('fade') ?
         $tip
           .one('bsTransitionEnd', complete)
-          .emulateTransitionEnd(150) :
+          .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
         complete()
     }
   }
@@ -2969,16 +3108,18 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     if (delta.left) offset.left += delta.left
     else offset.top += delta.top
 
-    var arrowDelta          = delta.left ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
-    var arrowPosition       = delta.left ? 'left'        : 'top'
-    var arrowOffsetPosition = delta.left ? 'offsetWidth' : 'offsetHeight'
+    var isVertical          = /top|bottom/.test(placement)
+    var arrowDelta          = isVertical ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
+    var arrowOffsetPosition = isVertical ? 'offsetWidth' : 'offsetHeight'
 
     $tip.offset(offset)
-    this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], arrowPosition)
+    this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
   }
 
-  Tooltip.prototype.replaceArrow = function (delta, dimension, position) {
-    this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + '%') : '')
+  Tooltip.prototype.replaceArrow = function (delta, dimension, isHorizontal) {
+    this.arrow()
+      .css(isHorizontal ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
+      .css(isHorizontal ? 'top' : 'left', '')
   }
 
   Tooltip.prototype.setContent = function () {
@@ -2989,16 +3130,17 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $tip.removeClass('fade in top bottom left right')
   }
 
-  Tooltip.prototype.hide = function () {
+  Tooltip.prototype.hide = function (callback) {
     var that = this
     var $tip = this.tip()
     var e    = $.Event('hide.bs.' + this.type)
 
-    this.$element.removeAttr('aria-describedby')
-
     function complete() {
       if (that.hoverState != 'in') $tip.detach()
-      that.$element.trigger('hidden.bs.' + that.type)
+      that.$element
+        .removeAttr('aria-describedby')
+        .trigger('hidden.bs.' + that.type)
+      callback && callback()
     }
 
     this.$element.trigger(e)
@@ -3010,7 +3152,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     $.support.transition && this.$tip.hasClass('fade') ?
       $tip
         .one('bsTransitionEnd', complete)
-        .emulateTransitionEnd(150) :
+        .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
       complete()
 
     this.hoverState = null
@@ -3031,13 +3173,20 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   Tooltip.prototype.getPosition = function ($element) {
     $element   = $element || this.$element
+
     var el     = $element[0]
     var isBody = el.tagName == 'BODY'
-    return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : null, {
-      scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop(),
-      width:  isBody ? $(window).width()  : $element.outerWidth(),
-      height: isBody ? $(window).height() : $element.outerHeight()
-    }, isBody ? { top: 0, left: 0 } : $element.offset())
+
+    var elRect    = el.getBoundingClientRect()
+    if (elRect.width == null) {
+      // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
+      elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
+    }
+    var elOffset  = isBody ? { top: 0, left: 0 } : $element.offset()
+    var scroll    = { scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop() }
+    var outerDims = isBody ? { width: $(window).width(), height: $(window).height() } : null
+
+    return $.extend({}, elRect, scroll, outerDims, elOffset)
   }
 
   Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
@@ -3101,14 +3250,6 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     return (this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow'))
   }
 
-  Tooltip.prototype.validate = function () {
-    if (!this.$element[0].parentNode) {
-      this.hide()
-      this.$element = null
-      this.options  = null
-    }
-  }
-
   Tooltip.prototype.enable = function () {
     this.enabled = true
   }
@@ -3135,8 +3276,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   }
 
   Tooltip.prototype.destroy = function () {
+    var that = this
     clearTimeout(this.timeout)
-    this.hide().$element.off('.' + this.type).removeData('bs.' + this.type)
+    this.hide(function () {
+      that.$element.off('.' + that.type).removeData('bs.' + that.type)
+    })
   }
 
 
@@ -3145,12 +3289,18 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   function Plugin(option) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.tooltip')
-      var options = typeof option == 'object' && option
+      var $this    = $(this)
+      var data     = $this.data('bs.tooltip')
+      var options  = typeof option == 'object' && option
+      var selector = options && options.selector
 
       if (!data && option == 'destroy') return
-      if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
+      if (selector) {
+        if (!data) $this.data('bs.tooltip', (data = {}))
+        if (!data[selector]) data[selector] = new Tooltip(this, options)
+      } else {
+        if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
+      }
       if (typeof option == 'string') data[option]()
     })
   }
@@ -3172,7 +3322,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: popover.js v3.2.0
+ * Bootstrap: popover.js v3.3.1
  * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -3192,7 +3342,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
 
-  Popover.VERSION  = '3.2.0'
+  Popover.VERSION  = '3.3.1'
 
   Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
     placement: 'right',
@@ -3219,7 +3369,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var content = this.getContent()
 
     $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
-    $tip.find('.popover-content').empty()[ // we use append for html objects to maintain js events
+    $tip.find('.popover-content').children().detach().end()[ // we use append for html objects to maintain js events
       this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
     ](content)
 
@@ -3259,12 +3409,18 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   function Plugin(option) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.popover')
-      var options = typeof option == 'object' && option
+      var $this    = $(this)
+      var data     = $this.data('bs.popover')
+      var options  = typeof option == 'object' && option
+      var selector = options && options.selector
 
       if (!data && option == 'destroy') return
-      if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
+      if (selector) {
+        if (!data) $this.data('bs.popover', (data = {}))
+        if (!data[selector]) data[selector] = new Popover(this, options)
+      } else {
+        if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
+      }
       if (typeof option == 'string') data[option]()
     })
   }
@@ -3286,7 +3442,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: scrollspy.js v3.2.0
+ * Bootstrap: scrollspy.js v3.3.1
  * http://getbootstrap.com/javascript/#scrollspy
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -3317,7 +3473,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.process()
   }
 
-  ScrollSpy.VERSION  = '3.2.0'
+  ScrollSpy.VERSION  = '3.3.1'
 
   ScrollSpy.DEFAULTS = {
     offset: 10
@@ -3378,8 +3534,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
     }
 
-    if (activeTarget && scrollTop <= offsets[0]) {
-      return activeTarget != (i = targets[0]) && this.activate(i)
+    if (activeTarget && scrollTop < offsets[0]) {
+      this.activeTarget = null
+      return this.clear()
     }
 
     for (i = offsets.length; i--;) {
@@ -3393,9 +3550,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   ScrollSpy.prototype.activate = function (target) {
     this.activeTarget = target
 
-    $(this.selector)
-      .parentsUntil(this.options.target, '.active')
-      .removeClass('active')
+    this.clear()
 
     var selector = this.selector +
         '[data-target="' + target + '"],' +
@@ -3412,6 +3567,12 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     }
 
     active.trigger('activate.bs.scrollspy')
+  }
+
+  ScrollSpy.prototype.clear = function () {
+    $(this.selector)
+      .parentsUntil(this.options.target, '.active')
+      .removeClass('active')
   }
 
 
@@ -3457,7 +3618,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: tab.js v3.2.0
+ * Bootstrap: tab.js v3.3.1
  * http://getbootstrap.com/javascript/#tabs
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -3475,7 +3636,9 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.element = $(element)
   }
 
-  Tab.VERSION = '3.2.0'
+  Tab.VERSION = '3.3.1'
+
+  Tab.TRANSITION_DURATION = 150
 
   Tab.prototype.show = function () {
     var $this    = this.element
@@ -3489,22 +3652,30 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
     if ($this.parent('li').hasClass('active')) return
 
-    var previous = $ul.find('.active:last a')[0]
-    var e        = $.Event('show.bs.tab', {
-      relatedTarget: previous
+    var $previous = $ul.find('.active:last a')
+    var hideEvent = $.Event('hide.bs.tab', {
+      relatedTarget: $this[0]
+    })
+    var showEvent = $.Event('show.bs.tab', {
+      relatedTarget: $previous[0]
     })
 
-    $this.trigger(e)
+    $previous.trigger(hideEvent)
+    $this.trigger(showEvent)
 
-    if (e.isDefaultPrevented()) return
+    if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
 
     var $target = $(selector)
 
     this.activate($this.closest('li'), $ul)
     this.activate($target, $target.parent(), function () {
+      $previous.trigger({
+        type: 'hidden.bs.tab',
+        relatedTarget: $this[0]
+      })
       $this.trigger({
         type: 'shown.bs.tab',
-        relatedTarget: previous
+        relatedTarget: $previous[0]
       })
     })
   }
@@ -3513,15 +3684,21 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var $active    = container.find('> .active')
     var transition = callback
       && $.support.transition
-      && $active.hasClass('fade')
+      && (($active.length && $active.hasClass('fade')) || !!container.find('> .fade').length)
 
     function next() {
       $active
         .removeClass('active')
         .find('> .dropdown-menu > .active')
-        .removeClass('active')
+          .removeClass('active')
+        .end()
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', false)
 
-      element.addClass('active')
+      element
+        .addClass('active')
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', true)
 
       if (transition) {
         element[0].offsetWidth // reflow for transition
@@ -3531,16 +3708,21 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       }
 
       if (element.parent('.dropdown-menu')) {
-        element.closest('li.dropdown').addClass('active')
+        element
+          .closest('li.dropdown')
+            .addClass('active')
+          .end()
+          .find('[data-toggle="tab"]')
+            .attr('aria-expanded', true)
       }
 
       callback && callback()
     }
 
-    transition ?
+    $active.length && transition ?
       $active
         .one('bsTransitionEnd', next)
-        .emulateTransitionEnd(150) :
+        .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
       next()
 
     $active.removeClass('in')
@@ -3578,15 +3760,19 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   // TAB DATA-API
   // ============
 
-  $(document).on('click.bs.tab.data-api', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
+  var clickHandler = function (e) {
     e.preventDefault()
     Plugin.call($(this), 'show')
-  })
+  }
+
+  $(document)
+    .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
+    .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
 
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: affix.js v3.2.0
+ * Bootstrap: affix.js v3.3.1
  * http://getbootstrap.com/javascript/#affix
  * ========================================================================
  * Copyright 2011-2014 Twitter, Inc.
@@ -3615,13 +3801,35 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     this.checkPosition()
   }
 
-  Affix.VERSION  = '3.2.0'
+  Affix.VERSION  = '3.3.1'
 
   Affix.RESET    = 'affix affix-top affix-bottom'
 
   Affix.DEFAULTS = {
     offset: 0,
     target: window
+  }
+
+  Affix.prototype.getState = function (scrollHeight, height, offsetTop, offsetBottom) {
+    var scrollTop    = this.$target.scrollTop()
+    var position     = this.$element.offset()
+    var targetHeight = this.$target.height()
+
+    if (offsetTop != null && this.affixed == 'top') return scrollTop < offsetTop ? 'top' : false
+
+    if (this.affixed == 'bottom') {
+      if (offsetTop != null) return (scrollTop + this.unpin <= position.top) ? false : 'bottom'
+      return (scrollTop + targetHeight <= scrollHeight - offsetBottom) ? false : 'bottom'
+    }
+
+    var initializing   = this.affixed == null
+    var colliderTop    = initializing ? scrollTop : position.top
+    var colliderHeight = initializing ? targetHeight : height
+
+    if (offsetTop != null && colliderTop <= offsetTop) return 'top'
+    if (offsetBottom != null && (colliderTop + colliderHeight >= scrollHeight - offsetBottom)) return 'bottom'
+
+    return false
   }
 
   Affix.prototype.getPinnedOffset = function () {
@@ -3639,42 +3847,40 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
   Affix.prototype.checkPosition = function () {
     if (!this.$element.is(':visible')) return
 
-    var scrollHeight = $(document).height()
-    var scrollTop    = this.$target.scrollTop()
-    var position     = this.$element.offset()
+    var height       = this.$element.height()
     var offset       = this.options.offset
     var offsetTop    = offset.top
     var offsetBottom = offset.bottom
+    var scrollHeight = $('body').height()
 
     if (typeof offset != 'object')         offsetBottom = offsetTop = offset
     if (typeof offsetTop == 'function')    offsetTop    = offset.top(this.$element)
     if (typeof offsetBottom == 'function') offsetBottom = offset.bottom(this.$element)
 
-    var affix = this.unpin   != null && (scrollTop + this.unpin <= position.top) ? false :
-                offsetBottom != null && (position.top + this.$element.height() >= scrollHeight - offsetBottom) ? 'bottom' :
-                offsetTop    != null && (scrollTop <= offsetTop) ? 'top' : false
+    var affix = this.getState(scrollHeight, height, offsetTop, offsetBottom)
 
-    if (this.affixed === affix) return
-    if (this.unpin != null) this.$element.css('top', '')
+    if (this.affixed != affix) {
+      if (this.unpin != null) this.$element.css('top', '')
 
-    var affixType = 'affix' + (affix ? '-' + affix : '')
-    var e         = $.Event(affixType + '.bs.affix')
+      var affixType = 'affix' + (affix ? '-' + affix : '')
+      var e         = $.Event(affixType + '.bs.affix')
 
-    this.$element.trigger(e)
+      this.$element.trigger(e)
 
-    if (e.isDefaultPrevented()) return
+      if (e.isDefaultPrevented()) return
 
-    this.affixed = affix
-    this.unpin = affix == 'bottom' ? this.getPinnedOffset() : null
+      this.affixed = affix
+      this.unpin = affix == 'bottom' ? this.getPinnedOffset() : null
 
-    this.$element
-      .removeClass(Affix.RESET)
-      .addClass(affixType)
-      .trigger($.Event(affixType.replace('affix', 'affixed')))
+      this.$element
+        .removeClass(Affix.RESET)
+        .addClass(affixType)
+        .trigger(affixType.replace('affix', 'affixed') + '.bs.affix')
+    }
 
     if (affix == 'bottom') {
       this.$element.offset({
-        top: scrollHeight - this.$element.height() - offsetBottom
+        top: scrollHeight - height - offsetBottom
       })
     }
   }
@@ -3719,8 +3925,8 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
       data.offset = data.offset || {}
 
-      if (data.offsetBottom) data.offset.bottom = data.offsetBottom
-      if (data.offsetTop)    data.offset.top    = data.offsetTop
+      if (data.offsetBottom != null) data.offset.bottom = data.offsetBottom
+      if (data.offsetTop    != null) data.offset.top    = data.offsetTop
 
       Plugin.call($spy, data)
     })
@@ -3733,7 +3939,11 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js"}],"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery-ui/dist/jquery-ui.js":[function(require,module,exports){
+},{"jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery-ui/dist/jquery-ui.js":[function(require,module,exports){
+(function (global){
+
+; require("jquery");
+;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
 /*! jQuery UI - v1.11.2-pre - 2014-09-11
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, accordion.js, autocomplete.js, button.js, datepicker.js, dialog.js, effect-blind.js, effect-bounce.js, effect-clip.js, effect-drop.js, effect-explode.js, effect-fade.js, effect-fold.js, effect-highlight.js, effect-puff.js, effect-pulsate.js, effect-scale.js, effect-shake.js, effect-size.js, effect-slide.js, effect-transfer.js, menu.js, position.js, progressbar.js, selectmenu.js, slider.js, spinner.js, tabs.js, tooltip.js
@@ -20414,7 +20624,10 @@ return $.widget( "ui.tooltip", {
 
 }));
 
-},{}],"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
+}).call(global, module, undefined, undefined);
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/
@@ -29606,7 +29819,7 @@ return jQuery;
 
 }));
 
-},{}],"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js":[function(require,module,exports){
+},{}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js":[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -31023,7 +31236,7 @@ return jQuery;
   }
 }.call(this));
 
-},{}],"/home/andrew/dev/beets/beetsplug/web/static/js/app.js":[function(require,module,exports){
+},{}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/app.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31039,7 +31252,7 @@ $(document).ready(function() {
     Backbone.history.start();
         app.view = new ArtistListView({collection: Artists});
 });
-},{"./collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","./routers/router":"/home/andrew/dev/beets/beetsplug/web/static/js/routers/router.js","./views/artistlistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js":[function(require,module,exports){
+},{"./collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./routers/router":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/routers/router.js","./views/artistlistview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31053,7 +31266,7 @@ var Artists = Backbone.Collection.extend({
 });
 
 module.exports = new Artists([]);
-},{"../models/artist":"/home/andrew/dev/beets/beetsplug/web/static/js/models/artist.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/jquery.js":[function(require,module,exports){
+},{"../models/artist":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/models/artist.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js":[function(require,module,exports){
 (function (global){
 var $ = global.jQuery = global.$ = require('jquery')
 
@@ -31062,7 +31275,7 @@ require('bootstrap')
 
 module.exports = $;
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"bootstrap":"/home/andrew/dev/beets/beetsplug/web/node_modules/bootstrap/dist/js/bootstrap.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","jquery-ui":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery-ui/dist/jquery-ui.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/models/artist.js":[function(require,module,exports){
+},{"bootstrap":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/bootstrap/dist/js/bootstrap.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","jquery-ui":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery-ui/dist/jquery-ui.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/models/artist.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31071,15 +31284,15 @@ Backbone.$ = $;
 module.exports = Backbone.Model.extend({
 	urlRoot: '/artist'
 });
-},{"backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/routers/router.js":[function(require,module,exports){
+},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/routers/router.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var ArtistListView = require('../views/artistlistview');
+var ArtistListView = require('../views/artistList');
 var Artists = require('../collections/artists');
-var ArtistAlbumsView = require('../views/artistalbumsview');
+var ArtistAlbumsView = require('../views/artistAlbums');
 // var ArtistAlbumsView = require('../views/artistalbumsview');
 // var app = app || {};
 
@@ -31107,7 +31320,8 @@ module.exports = Backbone.Router.extend({
         // $('#artist-list').html(this.view.render.el());
     }
 });
-},{"../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","../views/artistalbumsview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistalbumsview.js","../views/artistlistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsongitemview.js":[function(require,module,exports){
+
+},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../views/artistAlbums":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbums.js","../views/artistList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistList.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31328,13 +31542,13 @@ module.exports = Backbone.View.extend({
     }
 });
 
-},{"../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js":[function(require,module,exports){
+},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumsongitemview');
+var AlbumSongItemView = require('./albumSongItem');
 
 module.exports = Backbone.View.extend({
 	tagName: 'ul',
@@ -31355,11 +31569,68 @@ module.exports = Backbone.View.extend({
 		return this;
 	}
 });
-},{"./albumsongitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsongitemview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistalbumsview.js":[function(require,module,exports){
+
+},{"./albumSongItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbum.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
-var ArtistAlbumView = require('./artistalbumview');
+Backbone.$ = $;
+var AlbumSongListView = require('./albumSongList');
+var Better = require('./betterAlbum');
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		$('#progress-bar').click(function() {
+			console.log('clicked outer div');
+		});
+		$('.progBar').click(function() {console.log('clicked inner div')});
+	},
+	events: {
+		'mouseover': 'hover',
+		'mouseleave': 'mouseout',
+		'click': 'clicked'
+	},
+	className: 'square bg',
+	render: function() {
+		var that = this;
+		var albumArt = this.getArtURL(this.model.id);
+
+		$.ajax({
+			url: albumArt,
+			success: function() {
+				that.$el.css('background-image', 'url(\''+albumArt+'\')');
+			},
+			error: function() {
+				that.$el.css('background-image', 'url(\'http://i.imgur.com/uHgieji.png\')');
+				that.$el.css('filter', 'hue-rotate(120deg)')
+			}
+		});
+		return this;
+	},
+	getArtURL: function(id) {
+        return "/album/"+id+"/art";
+    },
+    hover: function() {
+    	this.$('.content').slideDown('fast');
+    },
+    mouseout: function() {
+    	this.$('.content').slideUp();
+    },
+    clicked: function() {
+        var albumArt = this.getArtURL(this.model.id);
+        this.albumView = new Better({model: this.model});
+
+        $('#album-detail').html(this.albumView.render().el);
+
+        $('html, body').animate({scrollTop : 0},300);
+    }
+});
+
+},{"./albumSongList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js","./betterAlbum":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/betterAlbum.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbums.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var ArtistAlbumView = require('./artistAlbum');
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
@@ -31404,87 +31675,79 @@ module.exports = Backbone.View.extend({
 
 	}
 });
-},{"./artistalbumview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistalbumview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistalbumview.js":[function(require,module,exports){
-var $ = require('jquery');
+
+},{"./artistAlbum":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistAlbum.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistList.js":[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
+var Artists = require('../collections/artists');
+var ArtistItemView = require('./artistListItem');
+var SoundQueueView = require('./soundQueue');
+var $ = require('../jquery');
 Backbone.$ = $;
-var AlbumSongListView = require('./albumsonglistview');
-var Better = require('./betteralbumview');
+// var Artists = new Artists();
 
 module.exports = Backbone.View.extend({
-	initialize: function() {
-		$('#progress-bar').click(function() {
-			console.log('clicked outer div');
-		});
-		$('.progBar').click(function() {console.log('clicked inner div')});
-	},
-	events: {
-		'mouseover': 'hover',
-		'mouseleave': 'mouseout',
-		'click': 'clicked'
-	},
-	className: 'square bg',
-	render: function() {
-		var that = this;
-		this.$el.append('<div class="content"><div class="table"><div class="table-cell"><div>'+this.model.album+'<br>'+this.model.tracktotal+' tracks'+'</div></div></div></div>');
-		var albumArt = this.getArtURL(this.model.id);
+    tagName: 'ul',
+    id: 'artist-list',
+    initialize: function() {
+        this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(Backbone.eventBus, 'showArtistList', this.showArtistList);
+        var soundQueue = new SoundQueueView;
+        soundQueue.render();
+        $('body').append(soundQueue.render().el);
+    },
+    showArtistList: function() {
+        this.collection.fetch({reset:true});
+        $('.shrink-btn').click();
+    },
+    render: function() {
+        $('.artist-heading').slideUp('fast');
+    	var artistNames = this.collection.models[0].attributes.artist_names;
+        this.$el.empty();
+        var getRandomColor = this.getRandomColor;
+    	var that = this.$el;
+        artistNames.sort();
+        var firstLetters = [];
+        artistNames.forEach(function(name) {
+            firstLetters.push(name[0])
+        });
+        firstLetters = _.uniq(firstLetters, false);
+        that.append('<h3 class="letter-heads">'+firstLetters[0]+'</h3>');
+        var counter = 1;
+    	artistNames.forEach(function(artist) {
+            if (artist[0] == firstLetters[counter]) {
+                that.append('<h3 class="letter-heads">'+firstLetters[counter]+'</h3>');
+                counter++
+            }
+    		  that.append(new ArtistItemView({model: artist}).render().el);
+    	});
+        // console.log(this.$el);
+        $('.23beets').html(this.$el);
+        // console.log(that);
+        return this;
+    },
+    getRandomColor: function () {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    },
+    destroy_view: function() {
 
-		$.ajax({
-			url: albumArt,
-			success: function() {
-				that.$el.css('background-image', 'url(\''+albumArt+'\')');
-			},
-			error: function() {
-				// that.$el.css('background-image', 'url(\'http://i.imgur.com/XTpWUYg.png\')');
-				that.$el.css('background-image', 'url(\'http://i.imgur.com/uHgieji.png\')');
-				that.$el.css('filter', 'hue-rotate(120deg)')
-			}
-		});
-		return this;
-	},
-	getArtURL: function(id) {
-        return "/album/"+id+"/art";
-    },
-    hover: function() {
-    	this.$('.content').slideDown('fast');
-    },
-    mouseout: function() {
-    	this.$('.content').slideUp();
-    },
-    clicked: function() {
-        var albumArt = this.getArtURL(this.model.id);
-        this.albumView = new Better({model: this.model});
-        // console.log(this.albumView.render().el);
-        $('#album-detail').html(this.albumView.render().el);
-    	// console.log(this.model.items);
-    	// var url = '/item/' + this.model.items[0].id + '/file';
-    	// console.log(url);
-    	this.$('.content').addClass('album-song-list')
-    	// this.$('.content').css({'height': '100%', 'font-size': '0.55em', 'opacity': '0.88'});
-    	this.$('.table-cell').empty();
-    	this.$('.table-cell').before('<h4>'+this.model.album+'</h4>');
-    	// this.$('.table-cell').append('<h1>'+this.model)
-    	var theSongs = new AlbumSongListView({collection: this.model.items});
-    	// theSongs.render();
-    	this.$('.table-cell').append(theSongs.render().el);
-    	if (this.model.items.length > 16) {
-    		this.$('ul').addClass('ul-col-2');
-    	}
-    	if (this.model.items.length > 13) {
-    		this.$('.table-cell').addClass('valign-bottom');
-    	}
-    	if (this.model.items.length < 8) {
-    		this.$('ul').addClass('bigtext');
-    	}
-        $('html, body').animate({scrollTop : 0},300);
-    	// this.model.items.forEach(function(item){
-    	// 	this.$('.table-cell').append('<li style="list-style-type: none">'+item.title+'</li>');
-    	// 	// console.log(item.title);
-    	// }, this);
-    }
+	    // COMPLETELY UNBIND THE VIEW
+	    this.undelegateEvents();
+
+	    this.$el.removeData().unbind();
+	    // Remove view from DOM
+	    this.remove();
+	    Backbone.View.prototype.remove.call(this);
+
+	}
 });
-},{"./albumsonglistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js","./betteralbumview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/betteralbumview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js":[function(require,module,exports){
+
+},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js","./artistListItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js","./soundQueue":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31497,7 +31760,9 @@ module.exports = Backbone.View.extend({
 		return this;
 	}
 });
-},{"backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistview.js":[function(require,module,exports){
+},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js":[function(require,module,exports){
+module.exports=require("/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js")
+},{"backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistview.js":[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var Artists = require('../collections/artists');
@@ -31567,15 +31832,15 @@ module.exports = Backbone.View.extend({
 
 	}
 });
-},{"../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","../jquery":"/home/andrew/dev/beets/beetsplug/web/static/js/jquery.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","./soundqueueview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/betteralbumview.js":[function(require,module,exports){
+},{"../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","../jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/jquery.js","./artistlistitemview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js","./soundqueueview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundqueueview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/betterAlbum.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 var template = require('../../templates/albumsonglisttemplate.html');
-var AlbumSongListView = require('./albumsonglistview');
+var AlbumSongListView = require('./albumSongList');
 Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumsongitemview');
+var AlbumSongItemView = require('./albumSongItem');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
@@ -31600,7 +31865,63 @@ module.exports = Backbone.View.extend({
 		return this;
 	}
 });
-},{"../../templates/albumsonglisttemplate.html":"/home/andrew/dev/beets/beetsplug/web/static/templates/albumsonglisttemplate.html","./albumsongitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsongitemview.js","./albumsonglistview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/albumsonglistview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/js/views/soundqueueview.js":[function(require,module,exports){
+
+
+
+},{"../../templates/albumsonglisttemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html","./albumSongItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongItem.js","./albumSongList":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/albumSongList.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundQueue.js":[function(require,module,exports){
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+var Artists = require('../collections/artists');
+var ArtistItemView = require('./artistListItem');
+var template = require('../../templates/soundqueuetemplate.html');
+Backbone.$ = $;
+
+module.exports = Backbone.View.extend({
+	initialize: function() {
+		console.log('sound queue view got activated');
+	},
+	render: function() {
+		this.$el.html(template);
+		this.makeSortable();
+		return this;
+	},
+	makeSortable: function() {
+	    this.$( ".upnext-list" ).sortable({
+	    	items: "li:not(.ui-state-disabled)",
+	    	update: function(event, ui) {
+	    		// var order = $(this).sortable('toArray', {attribute: 'value'});
+                var order = $('.upnext-list').sortable('toArray');
+                console.log(order);
+                for (var i = 0; i < order.length; i++) {
+                	order[i] = order[i].substring(4);
+                }
+                oldPositionIndexArray = [];
+                order.forEach(function(ID) {
+				    var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(ID);
+				    oldPositionIndexArray.push(index)
+				});
+				console.log(order);
+				newSoundArray = [Artists.queueArray[0]];
+				oldPositionIndexArray.forEach(function(index) {
+					newSoundArray.push(Artists.queueArray[index])
+				});
+				console.log(newSoundArray);
+				Artists.queueArray = newSoundArray;
+            }
+	    });
+	    $( ".upnext-list" ).disableSelection();
+	    $('.glyphicon-step-forward').unbind('click').click(function(e) {
+			soundID = Artists.queueArray[0].id;
+			soundManager.stop(soundID);
+			// console.log(Artists.queueArray);
+			console.log(Artists.queueArray);
+			// console.log('got clicked');
+		});
+	}
+});
+
+},{"../../templates/soundqueuetemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./artistListItem":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistListItem.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/soundqueueview.js":[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -31652,22 +31973,22 @@ module.exports = Backbone.View.extend({
 		});
 	}
 });
-},{"../../templates/soundqueuetemplate.html":"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/home/andrew/dev/beets/beetsplug/web/static/js/collections/artists.js","./artistlistitemview":"/home/andrew/dev/beets/beetsplug/web/static/js/views/artistlistitemview.js","backbone":"/home/andrew/dev/beets/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/home/andrew/dev/beets/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/home/andrew/dev/beets/beetsplug/web/node_modules/underscore/underscore.js"}],"/home/andrew/dev/beets/beetsplug/web/static/templates/albumsonglisttemplate.html":[function(require,module,exports){
+},{"../../templates/soundqueuetemplate.html":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html","../collections/artists":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/collections/artists.js","./artistlistitemview":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/views/artistlistitemview.js","backbone":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/backbone/backbone.js","jquery":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/jquery/dist/jquery.js","underscore":"/usr/local/lib/python2.7/dist-packages/beetsplug/web/node_modules/underscore/underscore.js"}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/albumsonglisttemplate.html":[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='\n<div class="album-detail-bg" style="background: url(\''+
+__p+='<div class="album-detail-bg" \n    style="\n        background: url(\''+
 ((__t=( url ))==null?'':__t)+
-'\') no-repeat;     background-size: cover;\n    background-position-y: 20%;"></div>\n<div class="album-detail-content">\n<span>'+
+'\') no-repeat;\n        background-size: cover;\n        background-position-y: 20%;">\n</div>\n\n<div class="album-detail-content">\n    <span>'+
 ((__t=( artist ))==null?'':__t)+
-'</span>\n<h1>'+
+'</span>\n    <h1>'+
 ((__t=( name ))==null?'':__t)+
-'</h1>\n  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aliquam erat in ante malesuada, facilisis semper nulla semper. Phasellus sapien neque, faucibus in malesuada quis, lacinia et libero. Sed sed turpis tellus. Etiam ac aliquam tortor, eleifend rhoncus metus. Ut turpis massa, sollicitudin sit amet molestie a, posuere sit amet nisl. Mauris tincidunt cursus posuere. Nam commodo libero quis lacus sodales, nec feugiat ante posuere. Donec pulvinar auctor commodo. Donec egestas diam ut mi adipiscing, quis lacinia mauris condimentum. Quisque quis odio venenatis, venenatis nisi a, vehicula ipsum. Etiam at nisl eu felis vulputate porta.</p>\n  <p>Fusce ut placerat eros. Aliquam consequat in augue sed convallis. Donec orci urna, tincidunt vel dui at, elementum semper dolor. Donec tincidunt risus sed magna dictum, quis luctus metus volutpat. Donec accumsan et nunc vulputate accumsan. Vestibulum tempor, erat in mattis fringilla, elit urna ornare nunc, vel pretium elit sem quis orci. Vivamus condimentum dictum tempor. Nam at est ante. Sed lobortis et lorem in sagittis. In suscipit in est et vehicula.</p> -->\n\n</div>';
+'</h1>\n</div>\n\'</h1>\\n  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aliquam erat in ante malesuada, facilisis semper nulla semper. Phasellus sapien neque, faucibus in malesuada quis, lacinia et libero. Sed sed turpis tellus. Etiam ac aliquam tortor, eleifend rhoncus metus. Ut turpis massa, sollicitudin sit amet molestie a, posuere sit amet nisl. Mauris tincidunt cursus posuere. Nam commodo libero quis lacus sodales, nec feugiat ante posuere. Donec pulvinar auctor commodo. Donec egestas diam ut mi adipiscing, quis lacinia mauris condimentum. Quisque quis odio venenatis, venenatis nisi a, vehicula ipsum. Etiam at nisl eu felis vulputate porta.</p>\\n  <p>Fusce ut placerat eros. Aliquam consequat in augue sed convallis. Donec orci urna, tincidunt vel dui at, elementum semper dolor. Donec tincidunt risus sed magna dictum, quis luctus metus volutpat. Donec accumsan et nunc vulputate accumsan. Vestibulum tempor, erat in mattis fringilla, elit urna ornare nunc, vel pretium elit sem quis orci. Vivamus condimentum dictum tempor. Nam at est ante. Sed lobortis et lorem in sagittis. In suscipit in est et vehicula.</p> -->\\n\\n</div>\';\n}\n';
 }
 return __p;
 };
 
-},{}],"/home/andrew/dev/beets/beetsplug/web/static/templates/soundqueuetemplate.html":[function(require,module,exports){
+},{}],"/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/templates/soundqueuetemplate.html":[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
@@ -31676,4 +31997,4 @@ __p+='<!-- Right menu element-->\n<nav class="cbp-spmenu cbp-spmenu-vertical cbp
 return __p;
 };
 
-},{}]},{},["/home/andrew/dev/beets/beetsplug/web/static/js/app.js"])
+},{}]},{},["/usr/local/lib/python2.7/dist-packages/beetsplug/web/static/js/app.js"])

@@ -3,7 +3,7 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 Backbone.$ = $;
 
-var AlbumSongItemView = require('./albumsongitemview');
+var AlbumSongItemView = require('./albumSongItem');
 
 module.exports = Backbone.View.extend({
 	tagName: 'ul',
