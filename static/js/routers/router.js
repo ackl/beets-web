@@ -36,5 +36,6 @@ module.exports = Backbone.Router.extend({
             $('body').append(soundQueue.render().el);
             this._soundQueue = true;
         }
+
     }
 });

@@ -50,6 +50,7 @@ module.exports = Backbone.View.extend({
     	});
 
         $('.23beets').html(this.$el);
+
         return this;
     },
 

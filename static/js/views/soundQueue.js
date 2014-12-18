@@ -8,7 +8,6 @@ Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-        console.log('a new one of me is here');
 	},
 
 	render: function() {
@@ -19,25 +18,13 @@ module.exports = Backbone.View.extend({
 
 	sortable: function() {
 	    this.$( ".upnext-list" ).sortable({
-	    	items: "li:not(.ui-state-disabled)",
-
 	    	update: function(event, ui) {
-                var order = $('.upnext-list').sortable('toArray');
-                for (var i = 0; i < order.length; i++) {
-                	order[i] = order[i].substring(4);
-                }
-
-                oldPositionIndexArray = [];
-                order.forEach(function(ID) {
-				    var index = Artists.queueArray.map(function(e) { return e.id; }).indexOf(ID);
-				    oldPositionIndexArray.push(index)
-				});
-
-				newSoundArray = [Artists.queueArray[0]];
-				oldPositionIndexArray.forEach(function(index) {
-					newSoundArray.push(Artists.queueArray[index])
-				});
-
+                var queueIds = Artists.queueArray.map(function(e) { return e.id; }),
+                    newOrder = $('.upnext-list').sortable('toArray'),
+                    newSoundArray = _.map(newOrder, function(id) {
+                        return Artists.queueArray[queueIds.indexOf(id.substring(4))];
+                    });
+                newSoundArray.unshift(Artists.queueArray[0]);
 				Artists.queueArray = newSoundArray;
             }
 	    });
